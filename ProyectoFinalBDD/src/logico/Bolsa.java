@@ -149,7 +149,6 @@ public class Bolsa implements Serializable
 	        
 	        // Establecer la conexión
 	        connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	        System.out.println("Conexión establecida con SQL Server.");
 	    } catch (ClassNotFoundException | SQLException e) {
 	        System.err.println("Error al conectar con SQL Server: " + e.getMessage());
 	    }
