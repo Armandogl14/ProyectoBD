@@ -32,9 +32,6 @@ public class login extends JDialog
 
 	public static void main(String[] args) throws ClassNotFoundException, IOException
 	{
-
-		
-		
 		try
 		{
 			login dialog = new login();

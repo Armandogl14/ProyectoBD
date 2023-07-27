@@ -139,7 +139,6 @@ public class Bolsa implements Serializable
 		Bolsa.connection = connection;
 	}
 
-
 	// Método para abrir la conexión
 	public static Connection abrirConexion() {
 		 Connection connection = null;
