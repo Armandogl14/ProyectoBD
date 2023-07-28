@@ -27,7 +27,7 @@ public class Bolsa implements Serializable
 	private static Bolsa bolsa = null;
 	private static Usuario loginUser;
 	public int genSol;
-	private static final String DB_URL = "jdbc:sqlserver://192.168.100.118:1433;databaseName=BolsaEmpleo_Grupo1;encrypt=false";
+	private static final String DB_URL = "jdbc:sqlserver://192.168.100.118:1433;databaseName=Bolsa_Empleo_Grupo1;encrypt=false";
 	private static final String USERNAME = "mrodriguez";
 	private static final String PASSWORD = "dzjl61945R";
 	public static  Connection connection = null;
@@ -49,6 +49,18 @@ public class Bolsa implements Serializable
 			bolsa = new Bolsa();
 
 		return bolsa;
+	}
+
+	public static String getDbUrl() {
+		return DB_URL;
+	}
+
+	public static String getUsername() {
+		return USERNAME;
+	}
+
+	public static String getPassword() {
+		return PASSWORD;
 	}
 
 	public ArrayList<Persona> getPersonas()
@@ -95,6 +107,7 @@ public class Bolsa implements Serializable
 	{
 		return loginUser;
 	}
+	
 
 	public static void setLoginUser(Usuario loginUser)
 	{

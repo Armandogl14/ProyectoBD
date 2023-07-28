@@ -94,17 +94,20 @@ public class login extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (Bolsa.getInstance().confirmarLogin(txtUsername.getText(),
+						Principal principal = new Principal(Bolsa.getLoginUser().isAdmin());
+						dispose();
+						principal.setVisible(true);
+						/*if (Bolsa.getInstance().confirmarLogin(txtUsername.getText(),
 								String.valueOf(pswPassword.getPassword())))
 						{
-							Principal principal = new Principal(Bolsa.getLoginUser().isAdmin());
+							//Principal principal = new Principal(Bolsa.getLoginUser().isAdmin());
 							dispose();
 							principal.setVisible(true);
 						}
 						else
 							JOptionPane.showMessageDialog(null, "Parametros Incorrectos", "Informacion",
 									JOptionPane.INFORMATION_MESSAGE);
-
+						*/
 					}
 				});
 				btnIngresar.setActionCommand("OK");

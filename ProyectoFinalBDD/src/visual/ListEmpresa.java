@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -56,7 +61,7 @@ public class ListEmpresa extends JDialog
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
 					model = new DefaultTableModel();
-					String[] columnas = { "RNC", "Nombre", "Telefono", "Direccion" };
+					String[] columnas = { "RNC", "Nombre", "Telefono", "Direccion","id_ciudad"};
 					model.setColumnIdentifiers(columnas);
 					table = new JTable();
 					table.addMouseListener(new MouseAdapter()
@@ -164,14 +169,33 @@ public class ListEmpresa extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
+		String selectQuery = "select RNC,Nombre,Telefono,Direccion,id_ciudad from Empresa";
+        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-		for (Empresa empresa : Bolsa.getInstance().getEmpresas())
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+                 rows[0] = resultSet.getString("RNC");
+                 rows[1] = resultSet.getString("Nombre");
+                 rows[2] = resultSet.getString("Telefono");
+                 rows[3] = resultSet.getString("Direccion");
+                 rows[4] = resultSet.getString("id_ciudad");
+                 model.addRow(rows);
+            }
+
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		/*for (Empresa empresa : Bolsa.getInstance().getEmpresas())
 		{
 			rows[0] = empresa.getRnc();
 			rows[1] = empresa.getNombre();
 			rows[2] = empresa.getTelefono();
 			rows[3] = empresa.getDireccion();
 			model.addRow(rows);
-		}
+		}*/
 	}
 }
