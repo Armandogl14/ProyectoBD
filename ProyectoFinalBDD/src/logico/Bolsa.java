@@ -516,16 +516,7 @@ public class Bolsa implements Serializable
 				person.setContratado(true);
 	}
 
-	public void actualizarEstadoSoliEmpresa(SoliEmpresa soli)
-	{
-		int cantidad = soli.getCantidad();
-
-		soli.setCantidad(cantidad - 1);
-
-		if (soli.getCantidad() == 0)
-			soli.setActiva(false);
-	}
-
+	
 	public boolean existeUsuario(String username)
 	{
 		boolean existe = false;

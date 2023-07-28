@@ -9,11 +9,10 @@ public class EmpTecnico extends SoliEmpresa
 	private int agnos;
 
 	public EmpTecnico(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, String rnc,
-			float porcentajeMacth, String tipoSalario, float sueldo, String idioma, int cantidad, String area,
+			float porcentajeMacth, String tipoSalario, float sueldo, String idioma, String area,
 			int agnos)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario,
-				cantidad);
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario);
 		this.area = area;
 		this.agnos = agnos;
 	}
