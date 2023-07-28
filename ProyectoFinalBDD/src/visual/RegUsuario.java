@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -94,11 +95,12 @@ public class RegUsuario extends JDialog
 						{
 							if (!Bolsa.getInstance().existeUsuario(txtUsername.getText()))
 							{
-								try {
-									PreparedStatement queryUser = conexion.prepareStatement(insertUser);
-									
+								try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(), Bolsa.getUsername(), Bolsa.getPassword());
+										PreparedStatement queryUser = conexion.prepareStatement(insertUser);){
+	
 									queryUser.setString(1, txtUsername.getText());
-									queryUser.setString(2, pswPassword.getText());
+									queryUser.setString(2, pswPassword.getPassword().toString());
+									int filasInsertadas = queryUser.executeUpdate();
 								} catch (SQLException e1){
 									System.err.println("Error.");
 								}
