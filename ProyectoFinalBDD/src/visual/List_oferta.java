@@ -232,7 +232,7 @@ public class List_oferta extends JDialog
 							: solicitud instanceof EmpTecnico ? "Tecnico" : "";
 
 				rows[5] = solicitud instanceof SoliPersona ? "1"
-						: solicitud instanceof SoliEmpresa ? String.valueOf(((SoliEmpresa) solicitud).getCantidad()) : "";
+						: solicitud instanceof SoliEmpresa ? "1" : "";
 
 				rows[6] = solicitud.isActiva() ? "Activa" : "Inactiva";
 

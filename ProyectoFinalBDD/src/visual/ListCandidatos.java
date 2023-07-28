@@ -117,13 +117,6 @@ public class ListCandidatos extends JDialog
 							match.setModal(true);
 							match.setVisible(true);
 							loadSolicitudes();
-							if (solicitudEmpresa.getCantidad() == 0)
-							{
-								JOptionPane.showMessageDialog(null, "Solicitud sin vacantes.", "Informacion",
-										JOptionPane.INFORMATION_MESSAGE);
-								solicitudEmpresa.setActiva(false);
-								dispose();
-							}
 						}
 					});
 					btnSelecionar.setEnabled(false);

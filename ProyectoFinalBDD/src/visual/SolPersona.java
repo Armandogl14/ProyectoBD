@@ -80,6 +80,8 @@ public class SolPersona extends JDialog
 	private JPanel PanelAptitudes;
 	private SoliPersona solicitud;
 	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
+	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
+	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -224,7 +226,6 @@ public class SolPersona extends JDialog
 			PanelAptitudes.add(lblcarrera);
 
 			cbxCarrera = new JComboBox();
-			cbxCarrera.setEnabled(false);
 			cbxCarrera.setBounds(72, 116, 208, 20);
 			PanelAptitudes.add(cbxCarrera);
 
@@ -233,7 +234,7 @@ public class SolPersona extends JDialog
 			PanelAptitudes.add(lblarea);
 
 			cbxArea = new JComboBox();
-			cbxArea.addItemListener(new ItemListener()
+			/*cbxArea.addItemListener(new ItemListener()
 			{
 				public void itemStateChanged(ItemEvent e)
 				{
@@ -265,9 +266,13 @@ public class SolPersona extends JDialog
 							cbxCarrera.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>" }));
 					}
 				}
-			});
-			cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ciencias de la Salud",
-					"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
+			});*/
+			//areas.add(0, "<Seleccionar>");
+			//cbxArea.setModel(new DefaultComboBoxModel<>(areas.toArray(new String[0])));
+			//cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ciencias de la Salud",
+			//		"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
+			carreras.add(0, "<Seleccionar>");
+			areas.add(0, "<Seleccionar>");
 			cbxArea.setBounds(72, 46, 208, 20);
 			PanelAptitudes.add(cbxArea);
 
@@ -405,18 +410,20 @@ public class SolPersona extends JDialog
 				public void mouseClicked(MouseEvent e)
 				{
 					rdbtnTecnico.setSelected(false);
-					lblarea.setVisible(true);
-					cbxArea.setVisible(true);
+					lblarea.setVisible(false);
+					cbxArea.setVisible(false);
 					lblcarrera.setVisible(true);
 					cbxCarrera.setVisible(true);
+					cbxCarrera.setEnabled(true);
+					cbxCarrera.setModel(new DefaultComboBoxModel<>(carreras.toArray(new String[0])));
 					lblagnos.setVisible(true);
 					spnAgnos.setVisible(true);
-					cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ciencias de la Salud",
-							"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
+					
 				}
 			});
+			
 			rdbtnUniversitario.setSelected(true);
-			rdbtnUniversitario.setBounds(122, 27, 108, 23);
+			rdbtnUniversitario.setBounds(117, 27, 108, 23);
 			PanelTipoSolicitud.add(rdbtnUniversitario);
 
 			rdbtnTecnico = new JRadioButton("Tecnico");
@@ -426,11 +433,12 @@ public class SolPersona extends JDialog
 				public void mouseClicked(MouseEvent e)
 				{
 					rdbtnUniversitario.setSelected(false);
+					lblarea.setVisible(true);
+					cbxArea.setVisible(true);
 					lblcarrera.setVisible(false);
 					cbxCarrera.setVisible(false);
-					cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Amd. de Peq. Empresas",
-							"Artes Culinarias", "Automatizacion", "Diseï¿½o Grafico", "Enfermeria", "Gestion Social", "Mercadeo",
-							"Microfinanzas", "Publicidad y Medios Digistales", "Redes de Datos", }));
+
+					cbxArea.setModel(new DefaultComboBoxModel<>(areas.toArray(new String[0])));
 				}
 			});
 			rdbtnTecnico.setBounds(330, 27, 81, 23);
@@ -705,13 +713,14 @@ public class SolPersona extends JDialog
 	            stmt = conn.createStatement();
 
 	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
 	            rs = stmt.executeQuery(sql);
 
 	            // Recopilar los nombres de las ciudades en el ArrayList
 	            while (rs.next()) {
 	                String ciudad = rs.getString("id_ciudad");
-	                ciudades.add(ciudad);
+	                String ciudad_nombre = rs.getString("nombre_ciudad");
+	                ciudades.add(ciudad+ " - " + ciudad_nombre);
 	            }
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -727,5 +736,79 @@ public class SolPersona extends JDialog
 	        }
 
 	        return ciudades;
+	    }
+	 private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
+		 ArrayList<String> areas = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String id = rs.getString("id_area");
+	                String nombre = rs.getString("nombre_area");
+	                areas.add(id+ " - " + nombre);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return areas;
+	    }
+	 private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
+		 ArrayList<String> carreras = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String id = rs.getString("id_carrera");
+	                String nombre = rs.getString("nombre_carrera");
+	                carreras.add(id+ " - " + nombre);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return carreras;
 	    }
 }

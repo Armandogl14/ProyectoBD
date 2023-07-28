@@ -113,7 +113,6 @@ public class MostrarMatch extends JDialog
 					{
 						Bolsa.getInstance().contrarPersona(persona.getId());
 						Bolsa.getInstance().desactivarSoliPersona(persona.getId());
-						Bolsa.getInstance().actualizarEstadoSoliEmpresa(solicitudEmpresa);
 						JOptionPane.showMessageDialog(null, "Persona contratada exitosamente.", "Informacion",
 								JOptionPane.INFORMATION_MESSAGE);
 						dispose();

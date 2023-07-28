@@ -11,6 +11,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
@@ -73,7 +77,10 @@ public class SolEmpresa extends JDialog
 	private String idioma;
 	private DefaultListModel<String> ModelActividades;
 	private SoliEmpresa solicitud = null; // mod
-
+	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
+	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
+	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolEmpresa(SoliEmpresa aux)
 	{
@@ -283,12 +290,8 @@ public class SolEmpresa extends JDialog
 				}
 				{
 					cbxCiudad = new JComboBox();
-					cbxCiudad.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Azua", "Bahoruco",
-							"Barahona", "Dajabon", "Distrito Nacional", "Duarte", "El Seybo", "Elias Piña", "Espaillat",
-							"Hato Mayor", "Hermanas Mirabal", "Independencia", "La Altagracia", "La Romana", "La Vega",
-							"Maria Trinidad Sanchez", "Monseñor Nouel", "Monte Plata", "Montecristi", "Pedernales", "Peravia",
-							"Puerto Plata", "Samana", "San Cristobal", "San Jose De Ocoa", "San Juan", "San Pedro De Macoris",
-							"Sanchez Ramirez", "Santiago", "Santiago Rodriguez", "Santo Domingo", "Valverde" }));
+					ciudades.add(0, "<Seleccionar>");
+					cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
 					cbxCiudad.setBounds(66, 142, 147, 20);
 					PanelDatosSolicitud.add(cbxCiudad);
 				}
@@ -366,8 +369,9 @@ public class SolEmpresa extends JDialog
 						cbxCarrera.setVisible(true);
 						lblagnos.setVisible(true);
 						spnAgnos.setVisible(true);
-						cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ciencias de la Salud",
-								"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
+						cbxCarrera.setEnabled(true);
+						cbxCarrera.setModel(new DefaultComboBoxModel<>(carreras.toArray(new String[0])));
+
 					}
 				});
 				rdbtnUniversitario.setSelected(true);
@@ -383,9 +387,8 @@ public class SolEmpresa extends JDialog
 						rdbtnUniversitario.setSelected(false);
 						lblcarrera.setVisible(false);
 						cbxCarrera.setVisible(false);
-						cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Amd. de Peq. Empresas",
-								"Artes Culinarias", "Automatizacion", "Diseño Grafico", "Enfermeria", "Gestion Social",
-								"Mercadeo", "Microfinanzas", "Publicidad y Medios Digistales", "Redes de Datos", }));
+						cbxArea.setModel(new DefaultComboBoxModel<>(areas.toArray(new String[0])));
+
 					}
 				});
 				rdbtnTecnico.setBounds(340, 27, 81, 23);
@@ -409,7 +412,7 @@ public class SolEmpresa extends JDialog
 			}
 
 			cbxArea = new JComboBox();
-			cbxArea.addItemListener(new ItemListener()
+			/*cbxArea.addItemListener(new ItemListener()
 			{
 				public void itemStateChanged(ItemEvent e)
 				{
@@ -440,9 +443,10 @@ public class SolEmpresa extends JDialog
 						cbxCarrera.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>" }));
 
 				}
-			});
-			cbxArea.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ciencias de la Salud",
-					"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
+			});*/
+			areas.add(0, "<Seleccionar>");
+			carreras.add(0, "<Seleccionar>");
+			
 			cbxArea.setBounds(67, 49, 208, 20);
 			PanelAptidutes.add(cbxArea);
 			{
@@ -746,5 +750,115 @@ public class SolEmpresa extends JDialog
 
 		return validado;
 	}
+	private ArrayList<String> obtenerCiudadesDesdeBaseDeDatos() {
+		 ArrayList<String> ciudades = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
 
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String ciudad = rs.getString("id_ciudad");
+	                String ciudad_nombre = rs.getString("nombre_ciudad");
+	                ciudades.add(ciudad+ " - " + ciudad_nombre);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return ciudades;
+	    }
+	 private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
+		 ArrayList<String> areas = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String id = rs.getString("id_area");
+	                String nombre = rs.getString("nombre_area");
+	                areas.add(id+ " - " + nombre);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return areas;
+	    }
+	 private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
+		 ArrayList<String> carreras = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String id = rs.getString("id_carrera");
+	                String nombre = rs.getString("nombre_carrera");
+	                carreras.add(id+ " - " + nombre);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return carreras;
+	    }
 }
