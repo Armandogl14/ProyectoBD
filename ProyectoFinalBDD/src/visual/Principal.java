@@ -152,24 +152,12 @@ public class Principal extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				RegUsuario usuario = new RegUsuario(null);
+				RegUsuario usuario = new RegUsuario();
 				usuario.setModal(true);
 				usuario.setVisible(true);
 			}
 		});
 		menuAdministracion.add(mntmNewMenuItem_6);
-
-		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Modificar Usuario");
-		mntmNewMenuItem_7.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				BuscarUsuario busq = new BuscarUsuario();
-				busq.setModal(true);
-				busq.setVisible(true);
-			}
-		});
-		menuAdministracion.add(mntmNewMenuItem_7);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));

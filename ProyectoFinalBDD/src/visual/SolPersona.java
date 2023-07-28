@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -82,8 +83,12 @@ public class SolPersona extends JDialog
 	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
 	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
-
-
+	private Connection  conexion = Bolsa.abrirConexion();
+	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
+	private String mobilidadStr = "No";
+	private String licenciaStr = "No";
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolPersona(SoliPersona aux)
 	{
@@ -222,15 +227,15 @@ public class SolPersona extends JDialog
 			PanelAptitudes.setLayout(null);
 
 			lblcarrera = new JLabel("Carrera:");
-			lblcarrera.setBounds(12, 118, 56, 16);
+			lblcarrera.setBounds(12, 77, 56, 16);
 			PanelAptitudes.add(lblcarrera);
 
 			cbxCarrera = new JComboBox();
-			cbxCarrera.setBounds(72, 116, 208, 20);
+			cbxCarrera.setBounds(72, 77, 208, 20);
 			PanelAptitudes.add(cbxCarrera);
 
 			lblarea = new JLabel("Area:");
-			lblarea.setBounds(12, 48, 56, 16);
+			lblarea.setBounds(12, 77, 56, 16);
 			PanelAptitudes.add(lblarea);
 
 			cbxArea = new JComboBox();
@@ -273,16 +278,16 @@ public class SolPersona extends JDialog
 			//		"Ciencias e Ingenieria", "Ciencias Administrativas", "Ciencias Humanidades y Artes" }));
 			carreras.add(0, "<Seleccionar>");
 			areas.add(0, "<Seleccionar>");
-			cbxArea.setBounds(72, 46, 208, 20);
+			cbxArea.setBounds(72, 75, 208, 20);
 			PanelAptitudes.add(cbxArea);
 
 			lblagnos = new JLabel("A\u00F1os:");
-			lblagnos.setBounds(328, 52, 46, 14);
+			lblagnos.setBounds(327, 78, 46, 14);
 			PanelAptitudes.add(lblagnos);
 
 			spnAgnos = new JSpinner();
 			spnAgnos.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
-			spnAgnos.setBounds(384, 49, 110, 20);
+			spnAgnos.setBounds(374, 75, 110, 20);
 			PanelAptitudes.add(spnAgnos);
 
 			ModelActividades = new DefaultListModel<String>();
@@ -466,27 +471,44 @@ public class SolPersona extends JDialog
 								{
 									if (rdbtnUniversitario.isSelected())
 									{
-										auxPerson = new Universitario(txtCedula.getText(), txtNombre.getText(),
-												txtTelefono.getText(), txtDireccion.getText(),
-												cbxCarrera.getSelectedItem().toString(),
-												Integer.valueOf(spnAgnos.getValue().toString()));
+										try {
+											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+											
+											queryPerson.setString(1, txtCedula.getText());
+											queryPerson.setString(2, txtNombre.getText());
+											queryPerson.setString(3, txtTelefono.getText());
+											queryPerson.setString(4, txtDireccion.getText());
+											queryPerson.setString(5, "No");
+											queryPerson.setString(6, "Universitario");
+											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										} catch (SQLException e1){
+											System.err.println("Error.");
+										}
 									}
 
 									else if (rdbtnTecnico.isSelected())
 									{
-										auxPerson = new Tecnico(txtCedula.getText(), txtNombre.getText(), txtTelefono.getText(),
-												txtDireccion.getText(), cbxArea.getSelectedItem().toString(),
-												Integer.valueOf(spnAgnos.getValue().toString()));
+										try {
+											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+											
+											queryPerson.setString(1, txtCedula.getText());
+											queryPerson.setString(2, txtNombre.getText());
+											queryPerson.setString(3, txtTelefono.getText());
+											queryPerson.setString(4, txtDireccion.getText());
+											queryPerson.setString(5, "No");
+											queryPerson.setString(6, "Tecnico");
+											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										} catch (SQLException e1){
+											System.err.println("Error.");
+										}
 									}
-
-									Bolsa.getInstance().addPersona(auxPerson);
 								}
 
 								if (rdbtnMudarseSi.isSelected())
-									mov = true;
+									mobilidadStr = "Si";
 
 								if (rdbtnLicenciaSi.isSelected())
-									lic = true;
+									licenciaStr = "Si";
 
 								/*SoliPersona soli = new SoliPersona(txtCodigo.getText(), mov,
 										cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),

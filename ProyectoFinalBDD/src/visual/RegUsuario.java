@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -27,15 +30,13 @@ public class RegUsuario extends JDialog
 	private JTextField txtUsername;
 	private JPasswordField pswPassword;
 	private JPasswordField pswConfirm;
-	private Usuario usuario = null;
+	private Connection  conexion = Bolsa.abrirConexion();
+	private String insertUser = "Insert into Usuario (username, contrasenia) values (?, ?)";
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public RegUsuario(Usuario aux)
+	public RegUsuario()
 	{
-		usuario = aux;
 		setTitle("Registrar Usuario");
-		if (usuario != null)
-			setTitle("Modificar Usuario: " + usuario.getUsername());
 		setBounds(100, 100, 441, 246);
 		setLocationRelativeTo(null);
 		setResizable(false);
@@ -83,53 +84,36 @@ public class RegUsuario extends JDialog
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton btnRegistrar = new JButton("Registrar");
-				if (usuario != null)
-					btnRegistrar.setText("Modidicar");
 
 				btnRegistrar.addActionListener(new ActionListener()
 				{
+					@SuppressWarnings("deprecation")
 					public void actionPerformed(ActionEvent e)
-					{
-						if (usuario == null)
+					{	
+						if (String.valueOf(pswPassword.getPassword()).equals(String.valueOf(pswConfirm.getPassword())))
 						{
-							if (String.valueOf(pswPassword.getPassword()).equals(String.valueOf(pswConfirm.getPassword())))
+							if (!Bolsa.getInstance().existeUsuario(txtUsername.getText()))
 							{
-								if (!Bolsa.getInstance().existeUsuario(txtUsername.getText()))
-								{
-									Usuario newUser = new Usuario(txtUsername.getText(),
-											String.valueOf(pswPassword.getPassword()));
-									Bolsa.getInstance().addUsuario(newUser);
-									clean();
-									JOptionPane.showMessageDialog(null, "Usuario Ingresado", "Informacion",
-											JOptionPane.INFORMATION_MESSAGE);
+								try {
+									PreparedStatement queryUser = conexion.prepareStatement(insertUser);
+									
+									queryUser.setString(1, txtUsername.getText());
+									queryUser.setString(2, pswPassword.getText());
+								} catch (SQLException e1){
+									System.err.println("Error.");
 								}
-								else
-									JOptionPane.showMessageDialog(null, "Ese Usuario no esta disponible", "Informacion",
-											JOptionPane.INFORMATION_MESSAGE);
-
+								clean();
+								JOptionPane.showMessageDialog(null, "Usuario Ingresado", "Informacion",
+										JOptionPane.INFORMATION_MESSAGE);
 							}
 							else
-								JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Informacion",
+								JOptionPane.showMessageDialog(null, "Ese Usuario no esta disponible", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
-						}
-						else if (usuario != null)
-						{
-							if (String.valueOf(pswPassword.getPassword()).equals(String.valueOf(pswConfirm.getPassword())))
-							{
-								if (!Bolsa.getInstance().existeUsuario(txtUsername.getText()))
-								{
-									usuario.setUsername(txtUsername.getText());
-									usuario.setPassword(String.valueOf(pswPassword.getPassword()));
 
-									JOptionPane.showMessageDialog(null, "Usuario modificado con exito", "Informacion",
-											JOptionPane.INFORMATION_MESSAGE);
-									dispose();
-								}
-								else
-									JOptionPane.showMessageDialog(null, "Ese Usuario no esta disponible", "Informacion",
-											JOptionPane.INFORMATION_MESSAGE);
-							}
 						}
+						else
+							JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Informacion",
+									JOptionPane.INFORMATION_MESSAGE);	
 					}
 				});
 				btnRegistrar.setActionCommand("OK");
@@ -149,7 +133,6 @@ public class RegUsuario extends JDialog
 				buttonPane.add(cancelButton);
 			}
 		}
-		loadUsuario();
 	}
 
 	private void clean()
@@ -157,12 +140,5 @@ public class RegUsuario extends JDialog
 		txtUsername.setText("");
 		pswPassword.setText("");
 		pswConfirm.setText("");
-	}
-
-	private void loadUsuario()
-	{
-		if (usuario != null)
-			txtUsername.setText(usuario.getUsername());
-
 	}
 }

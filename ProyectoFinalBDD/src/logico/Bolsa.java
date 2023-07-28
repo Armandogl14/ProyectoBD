@@ -10,7 +10,9 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -520,11 +522,24 @@ public class Bolsa implements Serializable
 	public boolean existeUsuario(String username)
 	{
 		boolean existe = false;
-
-		for (Usuario usuario : usuarios)
-			if (username.equalsIgnoreCase(usuario.getUsername()))
-				existe = true;
-
+		Connection conexion = abrirConexion();
+		String select = "select username from Usuario";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("username").equalsIgnoreCase(username))
+					existe = true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
 		return existe;
 	}
 
