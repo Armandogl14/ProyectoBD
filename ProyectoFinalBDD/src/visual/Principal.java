@@ -8,9 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -30,25 +32,23 @@ public class Principal extends JFrame
 	private Dimension dim = null;
 	private boolean admin = false;
 	private JMenu menuAdministracion;
-
-	public Principal(boolean ad)
+	
+	public static void main(String[] args) throws ClassNotFoundException, IOException
 	{
-		admin = ad;
-		addWindowListener(new WindowAdapter()
+		try
 		{
-			@Override
-			public void windowClosing(WindowEvent e)
-			{
+			Principal dialog = new Principal();
+			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			dialog.setVisible(true);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
-				try {
-					Bolsa.getInstance().getConnection().close();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		});
+	public Principal()
+	{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Principal.class.getResource("/images/Icon.png")));
 		setTitle("Bolsa de Trabajo");
 		setResizable(false);
@@ -185,9 +185,9 @@ public class Principal extends JFrame
 		Foto.setIcon(new ImageIcon(Principal.class.getResource("/images/Fondo Principal.png")));
 		Foto.setBounds(0, 0, 1910, 985);
 		panel.add(Foto);
-
+/*
 		if (!admin)
 			menuAdministracion.setEnabled(false);
-
+*/
 	}
 }

@@ -94,7 +94,7 @@ public class login extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						Principal principal = new Principal(Bolsa.getLoginUser().isAdmin());
+						Principal principal = new Principal();
 						dispose();
 						principal.setVisible(true);
 						/*if (Bolsa.getInstance().confirmarLogin(txtUsername.getText(),
