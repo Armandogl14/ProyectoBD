@@ -10,6 +10,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
@@ -77,6 +82,8 @@ public class SolPersona extends JDialog
 	private DefaultListModel<String> ModelActividades;
 	private JPanel PanelAptitudes;
 	private SoliPersona solicitud;
+	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
+
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolPersona(SoliPersona aux)
@@ -415,12 +422,14 @@ public class SolPersona extends JDialog
 			PanelDatosSolicitud.add(label);
 
 			cbxCiudad = new JComboBox();
-			cbxCiudad.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Azua", "Bahoruco", "Barahona",
+			/*cbxCiudad.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Azua", "Bahoruco", "Barahona",
 					"Dajabon", "Distrito Nacional", "Duarte", "El Seybo", "Elias PiÃ±a", "Espaillat", "Hato Mayor",
 					"Hermanas Mirabal", "Independencia", "La Altagracia", "La Romana", "La Vega", "Maria Trinidad Sanchez",
 					"MonseÃ±or Nouel", "Monte Plata", "Montecristi", "Pedernales", "Peravia", "Puerto Plata", "Samana",
 					"San Cristobal", "San Jose De Ocoa", "San Juan", "San Pedro De Macoris", "Sanchez Ramirez", "Santiago",
-					"Santiago Rodriguez", "Santo Domingo", "Valverde" }));
+					"Santiago Rodriguez", "Santo Domingo", "Valverde" }));*/
+			ciudades.add(0, "<Seleccionar>");
+			cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
 			cbxCiudad.setBounds(78, 143, 147, 20);
 			PanelDatosSolicitud.add(cbxCiudad);
 
@@ -731,4 +740,40 @@ public class SolPersona extends JDialog
 	
 		return validado;
 	}
+	 private ArrayList<String> obtenerCiudadesDesdeBaseDeDatos() {
+		 ArrayList<String> ciudades = new ArrayList<>();
+	        Connection conn = null;
+	        Statement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
+	            conn = Bolsa.abrirConexion();
+
+	            stmt = conn.createStatement();
+
+	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+	            String sql = "select id_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+	            rs = stmt.executeQuery(sql);
+
+	            // Recopilar los nombres de las ciudades en el ArrayList
+	            while (rs.next()) {
+	                String ciudad = rs.getString("id_ciudad");
+	                ciudades.add(ciudad);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            // Cerrar recursos (result set, statement y conexión)
+	            try {
+	                if (rs != null) rs.close();
+	                if (stmt != null) stmt.close();
+	                if (conn != null) conn.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return ciudades;
+	    }
 }
