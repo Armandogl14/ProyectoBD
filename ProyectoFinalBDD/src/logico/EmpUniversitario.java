@@ -9,10 +9,10 @@ public class EmpUniversitario extends SoliEmpresa
 	private int agnos;
 
 	public EmpUniversitario(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad,
-			String rnc, float porcentajeMacth, String tipoSalario, float sueldo, ArrayList<String> idiomas, int cantidad,
+			String rnc, float porcentajeMacth, String tipoSalario, float sueldo, String idioma, int cantidad,
 			String carrera, int agnos)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idiomas, rnc, porcentajeMacth, tipoSalario,
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario,
 				cantidad);
 		this.carrera = carrera;
 		this.agnos = agnos;

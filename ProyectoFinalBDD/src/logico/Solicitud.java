@@ -16,10 +16,10 @@ public abstract class Solicitud implements Serializable
 	protected String cuidad;
 	protected float sueldo;
 	protected boolean activa;
-	private ArrayList<String> idiomas;
+	private String idioma;
 
 	public Solicitud(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, float sueldo,
-			ArrayList<String> idiomas)
+			String idioma)
 	{
 		super();
 		this.codigo = codigo;
@@ -29,7 +29,7 @@ public abstract class Solicitud implements Serializable
 		this.cuidad = cuidad;
 		this.sueldo = sueldo;
 		activa = true;
-		this.idiomas = idiomas;
+		this.idioma = idioma;
 	}
 
 	public String getCodigo()
@@ -102,14 +102,14 @@ public abstract class Solicitud implements Serializable
 		this.activa = activa;
 	}
 
-	public ArrayList<String> getIdiomas()
+	public String getIdiomas()
 	{
-		return idiomas;
+		return idioma;
 	}
 
-	public void setIdiomas(ArrayList<String> idiomas)
+	public void setIdiomas(String idioma)
 	{
-		this.idiomas = idiomas;
+		this.idioma = idioma;
 	}
 
 	public abstract boolean checkEstado();

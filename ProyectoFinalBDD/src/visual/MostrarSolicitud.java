@@ -36,10 +36,8 @@ public class MostrarSolicitud extends JDialog
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtIdentificacion;
 	private JTextField txtPorcentaje;
-	private JTextField txtCodigo;
 	private JTextField txtNombre;
 	private JTextField txtTipo;
-	private JTextField txtCantidad;
 	private JTextField txtCarrera_Area;
 	private JTextField txtAgnos;
 	private JTextField txtTipoSueldo;
@@ -50,23 +48,13 @@ public class MostrarSolicitud extends JDialog
 	private JTextField txtLicencia;
 	private Solicitud solicitud = null;
 	private Persona persona = null;
-	private JLabel lblCantidad;
 	private JLabel lblNewLabel_1;
 	private JLabel lblPorcentaje;
 	private JLabel lblagnos;
 	private JLabel lblTipoSueldo;
-	private DefaultListModel<String> modelIdiomas;
-	private DefaultListModel<String> modelActividades;
-	private JPanel panelObrero;
-	@SuppressWarnings("rawtypes")
-	private JList listIdiomas;
-	private JScrollPane scrollPaneIdiomas;
-	@SuppressWarnings("rawtypes")
-	private JList listObrero;
-	private JScrollPane scrollPaneObrero;
 	private JLabel lblNewLabel_2;
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ })
 	public MostrarSolicitud(Solicitud aux)
 	{
 		solicitud = aux;
@@ -75,7 +63,7 @@ public class MostrarSolicitud extends JDialog
 
 		setTitle("Solicitud: " + solicitud.getCodigo());
 		setResizable(false);
-		setBounds(100, 100, 585, 747);
+		setBounds(100, 100, 585, 471);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -93,21 +81,17 @@ public class MostrarSolicitud extends JDialog
 			panel.add(panelDatos);
 			panelDatos.setLayout(null);
 
-			JLabel lblNewLabel = new JLabel("Codigo:");
-			lblNewLabel.setBounds(10, 35, 46, 14);
-			panelDatos.add(lblNewLabel);
-
 			JLabel lblrnc_cedula = new JLabel("Identif:");
-			lblrnc_cedula.setBounds(10, 84, 80, 14);
+			lblrnc_cedula.setBounds(12, 30, 80, 14);
 			panelDatos.add(lblrnc_cedula);
 
 			lblPorcentaje = new JLabel("Porcentaje:");
-			lblPorcentaje.setBounds(379, 35, 73, 14);
+			lblPorcentaje.setBounds(409, 363, 73, 14);
 			panelDatos.add(lblPorcentaje);
 
 			txtIdentificacion = new JTextField();
 			txtIdentificacion.setEditable(false);
-			txtIdentificacion.setBounds(66, 81, 109, 20);
+			txtIdentificacion.setBounds(68, 27, 109, 20);
 			panelDatos.add(txtIdentificacion);
 			txtIdentificacion.setColumns(10);
 			if (solicitud instanceof SoliPersona)
@@ -117,22 +101,18 @@ public class MostrarSolicitud extends JDialog
 
 			txtPorcentaje = new JTextField();
 			txtPorcentaje.setEditable(false);
-			txtPorcentaje.setBounds(455, 32, 46, 20);
+			txtPorcentaje.setBounds(485, 360, 46, 20);
 			panelDatos.add(txtPorcentaje);
 			txtPorcentaje.setColumns(10);
 			if (solicitud instanceof SoliEmpresa)
 				txtPorcentaje.setText(String.valueOf(((SoliEmpresa) solicitud).getPorcentajeMacth()));
 
-			lblCantidad = new JLabel("Cantidad:");
-			lblCantidad.setBounds(253, 35, 61, 14);
-			panelDatos.add(lblCantidad);
-
 			lblNewLabel_1 = new JLabel("Nombre:");
-			lblNewLabel_1.setBounds(253, 84, 73, 14);
+			lblNewLabel_1.setBounds(253, 30, 73, 14);
 			panelDatos.add(lblNewLabel_1);
 
 			JLabel lblNewLabel_5 = new JLabel("Tipo:");
-			lblNewLabel_5.setBounds(10, 133, 46, 14);
+			lblNewLabel_5.setBounds(10, 103, 46, 14);
 			panelDatos.add(lblNewLabel_5);
 
 			if (solicitud instanceof EmpUniversitario || persona instanceof Universitario)
@@ -149,43 +129,36 @@ public class MostrarSolicitud extends JDialog
 			}
 
 			lblagnos = new JLabel("Años:");
-			lblagnos.setBounds(253, 182, 46, 14);
+			lblagnos.setBounds(253, 106, 46, 14);
 			panelDatos.add(lblagnos);
 
 			JLabel lblNewLabel_8 = new JLabel("Contrato:");
-			lblNewLabel_8.setBounds(10, 233, 80, 14);
+			lblNewLabel_8.setBounds(10, 176, 80, 14);
 			panelDatos.add(lblNewLabel_8);
 
 			JLabel lblNewLabel_9 = new JLabel("Sueldo:");
-			lblNewLabel_9.setBounds(10, 289, 46, 14);
+			lblNewLabel_9.setBounds(12, 247, 46, 14);
 			panelDatos.add(lblNewLabel_9);
 
 			lblTipoSueldo = new JLabel("Tipo:");
-			lblTipoSueldo.setBounds(253, 233, 96, 14);
+			lblTipoSueldo.setBounds(253, 176, 96, 14);
 			panelDatos.add(lblTipoSueldo);
 
 			JLabel lblNewLabel_12 = new JLabel("Ciudad:");
-			lblNewLabel_12.setBounds(253, 289, 46, 14);
+			lblNewLabel_12.setBounds(253, 244, 46, 14);
 			panelDatos.add(lblNewLabel_12);
 
 			JLabel lblNewLabel_13 = new JLabel("Movil:");
-			lblNewLabel_13.setBounds(10, 338, 73, 14);
+			lblNewLabel_13.setBounds(12, 316, 73, 14);
 			panelDatos.add(lblNewLabel_13);
 
 			JLabel lblNewLabel_14 = new JLabel("Licencia:");
-			lblNewLabel_14.setBounds(253, 338, 61, 14);
+			lblNewLabel_14.setBounds(253, 319, 61, 14);
 			panelDatos.add(lblNewLabel_14);
-
-			txtCodigo = new JTextField();
-			txtCodigo.setEditable(false);
-			txtCodigo.setBounds(66, 32, 109, 20);
-			panelDatos.add(txtCodigo);
-			txtCodigo.setColumns(10);
-			txtCodigo.setText(solicitud.getCodigo());
 
 			txtNombre = new JTextField();
 			txtNombre.setEditable(false);
-			txtNombre.setBounds(316, 81, 185, 20);
+			txtNombre.setBounds(316, 27, 185, 20);
 			panelDatos.add(txtNombre);
 			txtNombre.setColumns(10);
 			if (solicitud instanceof SoliPersona)
@@ -196,21 +169,14 @@ public class MostrarSolicitud extends JDialog
 
 			txtTipo = new JTextField();
 			txtTipo.setEditable(false);
-			txtTipo.setBounds(66, 130, 166, 20);
+			txtTipo.setBounds(66, 100, 166, 20);
 			panelDatos.add(txtTipo);
 			txtTipo.setColumns(10);
 			if (solicitud instanceof EmpUniversitario || persona instanceof Universitario)
 				txtTipo.setText("Universitario");
 			else if (solicitud instanceof EmpTecnico || persona instanceof Tecnico)
 				txtTipo.setText("Tecnico");
-
-			txtCantidad = new JTextField();
-			txtCantidad.setEditable(false);
-			txtCantidad.setBounds(316, 32, 46, 20);
-			panelDatos.add(txtCantidad);
-			txtCantidad.setColumns(10);
 			if (solicitud instanceof SoliEmpresa)
-				txtCantidad.setText(String.valueOf(((SoliEmpresa) solicitud).getCantidad()));
 
 			txtCarrera_Area = new JTextField();
 			txtCarrera_Area.setEditable(false);
@@ -235,7 +201,7 @@ public class MostrarSolicitud extends JDialog
 
 			txtAgnos = new JTextField();
 			txtAgnos.setEditable(false);
-			txtAgnos.setBounds(316, 179, 61, 20);
+			txtAgnos.setBounds(316, 103, 61, 20);
 			panelDatos.add(txtAgnos);
 			txtAgnos.setColumns(10);
 			if (solicitud instanceof SoliEmpresa)
@@ -255,7 +221,7 @@ public class MostrarSolicitud extends JDialog
 
 			txtTipoSueldo = new JTextField();
 			txtTipoSueldo.setEditable(false);
-			txtTipoSueldo.setBounds(316, 230, 126, 20);
+			txtTipoSueldo.setBounds(316, 173, 126, 20);
 			panelDatos.add(txtTipoSueldo);
 			txtTipoSueldo.setColumns(10);
 			if (solicitud instanceof SoliEmpresa)
@@ -263,71 +229,38 @@ public class MostrarSolicitud extends JDialog
 
 			txtContrato = new JTextField();
 			txtContrato.setEditable(false);
-			txtContrato.setBounds(66, 230, 166, 20);
+			txtContrato.setBounds(66, 173, 166, 20);
 			panelDatos.add(txtContrato);
 			txtContrato.setColumns(10);
 			txtContrato.setText(solicitud.getContrato());
 
 			txtSueldo = new JTextField();
 			txtSueldo.setEditable(false);
-			txtSueldo.setBounds(66, 286, 109, 20);
+			txtSueldo.setBounds(68, 244, 109, 20);
 			panelDatos.add(txtSueldo);
 			txtSueldo.setColumns(10);
 			txtSueldo.setText(String.valueOf(solicitud.getSueldo()));
 
 			txtCiudad = new JTextField();
 			txtCiudad.setEditable(false);
-			txtCiudad.setBounds(316, 286, 109, 20);
+			txtCiudad.setBounds(316, 241, 109, 20);
 			panelDatos.add(txtCiudad);
 			txtCiudad.setColumns(10);
 			txtCiudad.setText(solicitud.getCuidad());
 
 			txtMovilidad = new JTextField();
 			txtMovilidad.setEditable(false);
-			txtMovilidad.setBounds(66, 335, 54, 20);
+			txtMovilidad.setBounds(66, 313, 54, 20);
 			panelDatos.add(txtMovilidad);
 			txtMovilidad.setColumns(10);
 			txtMovilidad.setText(solicitud.isMovilidad() ? "Si" : "No");
 
 			txtLicencia = new JTextField();
 			txtLicencia.setEditable(false);
-			txtLicencia.setBounds(316, 335, 54, 20);
+			txtLicencia.setBounds(316, 316, 54, 20);
 			panelDatos.add(txtLicencia);
 			txtLicencia.setColumns(10);
 			txtLicencia.setText(solicitud.isLicencia() ? "Si" : "No");
-
-			JPanel panelIdioma = new JPanel();
-			panelIdioma.setBorder(new TitledBorder(null, "Idiomas:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-			panelIdioma.setBounds(10, 387, 222, 219);
-			panelDatos.add(panelIdioma);
-			panelIdioma.setLayout(new BorderLayout(0, 0));
-
-			scrollPaneIdiomas = new JScrollPane();
-			scrollPaneIdiomas.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			panelIdioma.add(scrollPaneIdiomas, BorderLayout.CENTER);
-
-			listIdiomas = new JList();
-			listIdiomas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			modelIdiomas = new DefaultListModel<String>();
-			listIdiomas.setModel(modelIdiomas);
-			scrollPaneIdiomas.setViewportView(listIdiomas);
-
-			panelObrero = new JPanel();
-			panelObrero.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Actividades:",
-					TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-			panelObrero.setBounds(279, 387, 222, 219);
-			panelDatos.add(panelObrero);
-			panelObrero.setLayout(new BorderLayout(0, 0));
-
-			scrollPaneObrero = new JScrollPane();
-			scrollPaneObrero.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			panelObrero.add(scrollPaneObrero, BorderLayout.CENTER);
-
-			listObrero = new JList();
-			listObrero.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			modelActividades = new DefaultListModel<String>();
-			listObrero.setModel(modelActividades);
-			scrollPaneObrero.setViewportView(listObrero);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -348,8 +281,6 @@ public class MostrarSolicitud extends JDialog
 		}
 		if (solicitud instanceof SoliPersona)
 		{
-			lblCantidad.setVisible(false);
-			txtCantidad.setVisible(false);
 			lblPorcentaje.setVisible(false);
 			txtPorcentaje.setVisible(false);
 			txtTipoSueldo.setVisible(false);

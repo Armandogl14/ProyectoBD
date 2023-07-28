@@ -27,8 +27,6 @@ public class RegUsuario extends JDialog
 	private JTextField txtUsername;
 	private JPasswordField pswPassword;
 	private JPasswordField pswConfirm;
-	@SuppressWarnings("rawtypes")
-	private JComboBox cbxTipoUsuario;
 	private Usuario usuario = null;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -52,7 +50,7 @@ public class RegUsuario extends JDialog
 			panel.setLayout(null);
 			{
 				JLabel lblNewLabel = new JLabel("Username:");
-				lblNewLabel.setBounds(42, 37, 81, 14);
+				lblNewLabel.setBounds(57, 64, 81, 14);
 				panel.add(lblNewLabel);
 			}
 			{
@@ -66,20 +64,10 @@ public class RegUsuario extends JDialog
 				panel.add(lblNewLabel_2);
 			}
 
-			cbxTipoUsuario = new JComboBox();
-			cbxTipoUsuario.setModel(new DefaultComboBoxModel(new String[] { "Administrador", "Secretaria" }));
-			cbxTipoUsuario.setBounds(43, 117, 109, 20);
-			panel.add(cbxTipoUsuario);
-
 			txtUsername = new JTextField();
-			txtUsername.setBounds(42, 54, 110, 20);
+			txtUsername.setBounds(57, 81, 110, 20);
 			panel.add(txtUsername);
 			txtUsername.setColumns(10);
-			{
-				JLabel lblNewLabel_3 = new JLabel("Tipo de Usuario:");
-				lblNewLabel_3.setBounds(40, 98, 95, 14);
-				panel.add(lblNewLabel_3);
-			}
 
 			pswPassword = new JPasswordField();
 			pswPassword.setBounds(218, 54, 161, 20);
@@ -109,8 +97,7 @@ public class RegUsuario extends JDialog
 								if (!Bolsa.getInstance().existeUsuario(txtUsername.getText()))
 								{
 									Usuario newUser = new Usuario(txtUsername.getText(),
-											String.valueOf(pswPassword.getPassword()),
-											cbxTipoUsuario.getSelectedItem().toString());
+											String.valueOf(pswPassword.getPassword()));
 									Bolsa.getInstance().addUsuario(newUser);
 									clean();
 									JOptionPane.showMessageDialog(null, "Usuario Ingresado", "Informacion",
@@ -133,7 +120,6 @@ public class RegUsuario extends JDialog
 								{
 									usuario.setUsername(txtUsername.getText());
 									usuario.setPassword(String.valueOf(pswPassword.getPassword()));
-									usuario.setTipo(cbxTipoUsuario.getSelectedItem().toString());
 
 									JOptionPane.showMessageDialog(null, "Usuario modificado con exito", "Informacion",
 											JOptionPane.INFORMATION_MESSAGE);
@@ -163,17 +149,12 @@ public class RegUsuario extends JDialog
 				buttonPane.add(cancelButton);
 			}
 		}
-		if (usuario != null && usuario.isSecret())
-		{
-			cbxTipoUsuario.setEditable(false);
-		}
 		loadUsuario();
 	}
 
 	private void clean()
 	{
 		txtUsername.setText("");
-		cbxTipoUsuario.setSelectedIndex(0);
 		pswPassword.setText("");
 		pswConfirm.setText("");
 	}

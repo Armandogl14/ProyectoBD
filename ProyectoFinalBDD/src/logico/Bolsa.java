@@ -328,7 +328,7 @@ public class Bolsa implements Serializable
 		{
 			puntaje += compararContratos(solicitudEmpresa.getContrato(), solicitudPersona.getContrato());
 			puntaje += comprarSueldo(solicitudEmpresa.getSueldo(), solicitudPersona.getSueldo());
-			puntaje += compararIdiomas(solicitudEmpresa.getIdiomas(), solicitudPersona.getIdiomas());
+			puntaje += compararIdioma(solicitudEmpresa.getIdiomas(), solicitudPersona.getIdiomas());
 			puntaje += compararMovilidad(solicitudEmpresa.isMovilidad(), solicitudPersona.isMovilidad());
 			puntaje += compararLicencia(solicitudEmpresa.isLicencia(), solicitudPersona.isLicencia());
 			puntaje += compararCiudad(solicitudEmpresa.getCuidad(), solicitudPersona.getCuidad());
@@ -391,21 +391,16 @@ public class Bolsa implements Serializable
 		return total * (porcentaje / 100);
 	}
 
-	public float compararIdiomas(ArrayList<String> idiomasRequeridos, ArrayList<String> idiomaHablados)
+	public float compararIdioma(String idiomaRequerido, String idiomaHablado)
 	{
 		float porcentaje = 0;
 		float total = 10;
-		int cantidadIdiomas = idiomasRequeridos.size();
-		int cantidadEncontrados = 0;
-
-		for (String idR : idiomasRequeridos)
-			for (String idH : idiomaHablados)
-				if (idH.equalsIgnoreCase(idR))
-					cantidadEncontrados++;
-
-		porcentaje = (cantidadEncontrados * 100) / cantidadIdiomas;
-
-		return total * (porcentaje / 100);
+		
+		if(idiomaHablado.equalsIgnoreCase(idiomaRequerido))
+			return total;
+		
+		else
+			return porcentaje;
 	}
 
 	public float compararMovilidad(boolean empresa, boolean persona)

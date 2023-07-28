@@ -1,6 +1,5 @@
 package logico;
 
-import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class SoliPersona extends Solicitud
@@ -8,9 +7,9 @@ public class SoliPersona extends Solicitud
 	private String cedula;
 
 	public SoliPersona(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, float sueldo,
-			ArrayList<String> idiomas, String cedula)
+			String idioma, String cedula)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idiomas);
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma);
 		this.cedula = cedula;
 
 	}

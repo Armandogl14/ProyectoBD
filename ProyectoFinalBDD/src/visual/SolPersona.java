@@ -62,9 +62,7 @@ public class SolPersona extends JDialog
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbxContrato;
 	private JSpinner spnSalario;
-	private JTextField txtCodigo;
 	private JTextField txtIdiomas;
-	private JButton btnAgregarIdioma;
 	private JButton btnSolicitar;
 	private JButton btnCancelar;
 	private JTextField txtTelefono;
@@ -78,7 +76,6 @@ public class SolPersona extends JDialog
 	private JLabel lblagnos;
 	private boolean mov = false;
 	private boolean lic = false;
-	private ArrayList<String> idiomasAux;
 	private DefaultListModel<String> ModelActividades;
 	private JPanel PanelAptitudes;
 	private SoliPersona solicitud;
@@ -89,7 +86,6 @@ public class SolPersona extends JDialog
 	public SolPersona(SoliPersona aux)
 	{
 		solicitud = aux;
-		idiomasAux = new ArrayList<>();
 		setTitle("Registrar Solicitud de Persona");
 		if (solicitud != null)
 			setTitle("Modificar Solicitud de " + solicitud.getCedula());
@@ -294,37 +290,26 @@ public class SolPersona extends JDialog
 			PanelDatosSolicitud.setLayout(null);
 
 			JLabel lblNewLabel_7 = new JLabel("Contrato:");
-			lblNewLabel_7.setBounds(12, 38, 56, 16);
+			lblNewLabel_7.setBounds(12, 42, 56, 16);
 			PanelDatosSolicitud.add(lblNewLabel_7);
 
 			cbxContrato = new JComboBox();
 			cbxContrato.setModel(new DefaultComboBoxModel(
 					new String[] { "<Selecionar>", "Jornada Completa", "Media Jornada", "Jornada Mixta" }));
-			cbxContrato.setBounds(78, 36, 147, 20);
+			cbxContrato.setBounds(78, 40, 147, 20);
 			PanelDatosSolicitud.add(cbxContrato);
 
-			JLabel lblNewLabel_8 = new JLabel("Codigo:");
-			lblNewLabel_8.setBounds(265, 51, 56, 16);
-			PanelDatosSolicitud.add(lblNewLabel_8);
-
-			txtCodigo = new JTextField();
-			txtCodigo.setEditable(false);
-			txtCodigo.setBounds(331, 48, 116, 22);
-			txtCodigo.setText("SOL-" + Bolsa.getInstance().getGenSol());
-			PanelDatosSolicitud.add(txtCodigo);
-			txtCodigo.setColumns(10);
-
 			JLabel lblNewLabel_9 = new JLabel("Salario:");
-			lblNewLabel_9.setBounds(12, 92, 56, 16);
+			lblNewLabel_9.setBounds(12, 104, 56, 16);
 			PanelDatosSolicitud.add(lblNewLabel_9);
 
 			spnSalario = new JSpinner();
 			spnSalario.setModel(new SpinnerNumberModel(new Float(1000), new Float(1), null, new Float(500)));
-			spnSalario.setBounds(78, 90, 93, 20);
+			spnSalario.setBounds(78, 102, 93, 20);
 			PanelDatosSolicitud.add(spnSalario);
 
 			JLabel lblNewLabel_4 = new JLabel("Licencia:");
-			lblNewLabel_4.setBounds(12, 198, 56, 16);
+			lblNewLabel_4.setBounds(307, 178, 56, 16);
 			PanelDatosSolicitud.add(lblNewLabel_4);
 
 			rdbtnLicenciaSi = new JRadioButton("Si");
@@ -336,7 +321,7 @@ public class SolPersona extends JDialog
 					rdbtnLicenciaNo.setSelected(false);
 				}
 			});
-			rdbtnLicenciaSi.setBounds(78, 194, 48, 25);
+			rdbtnLicenciaSi.setBounds(373, 174, 48, 25);
 			PanelDatosSolicitud.add(rdbtnLicenciaSi);
 
 			rdbtnLicenciaNo = new JRadioButton("No");
@@ -349,11 +334,11 @@ public class SolPersona extends JDialog
 					rdbtnLicenciaSi.setSelected(false);
 				}
 			});
-			rdbtnLicenciaNo.setBounds(128, 194, 48, 25);
+			rdbtnLicenciaNo.setBounds(423, 174, 48, 25);
 			PanelDatosSolicitud.add(rdbtnLicenciaNo);
 
 			JLabel lblNewLabel_5 = new JLabel("Puede mudarse:");
-			lblNewLabel_5.setBounds(265, 185, 97, 16);
+			lblNewLabel_5.setBounds(289, 106, 97, 16);
 			PanelDatosSolicitud.add(lblNewLabel_5);
 
 			rdbtnMudarseSi = new JRadioButton("Si");
@@ -365,7 +350,7 @@ public class SolPersona extends JDialog
 					rdbtnMudarseNo.setSelected(false);
 				}
 			});
-			rdbtnMudarseSi.setBounds(368, 181, 48, 25);
+			rdbtnMudarseSi.setBounds(392, 102, 48, 25);
 			PanelDatosSolicitud.add(rdbtnMudarseSi);
 
 			rdbtnMudarseNo = new JRadioButton("No");
@@ -378,47 +363,20 @@ public class SolPersona extends JDialog
 					rdbtnMudarseSi.setSelected(false);
 				}
 			});
-			rdbtnMudarseNo.setBounds(418, 181, 53, 25);
+			rdbtnMudarseNo.setBounds(442, 102, 53, 25);
 			PanelDatosSolicitud.add(rdbtnMudarseNo);
 
-			JLabel lblNewLabel_11 = new JLabel("Idiomas:");
-			lblNewLabel_11.setBounds(265, 118, 56, 16);
+			JLabel lblNewLabel_11 = new JLabel("Idioma:");
+			lblNewLabel_11.setBounds(289, 40, 56, 16);
 			PanelDatosSolicitud.add(lblNewLabel_11);
 
 			txtIdiomas = new JTextField();
-			txtIdiomas.addKeyListener(new KeyAdapter()
-			{
-				@Override
-				public void keyTyped(KeyEvent e)
-				{
-					char c = e.getKeyChar();
-					if (!Character.isAlphabetic(c) && (c != KeyEvent.VK_BACK_SPACE) && (c != KeyEvent.VK_SPACE))
-						e.consume();
-
-					if (txtIdiomas.getText().length() > 1)
-						btnAgregarIdioma.setEnabled(true);
-				}
-			});
-			txtIdiomas.setBounds(331, 116, 86, 20);
+			txtIdiomas.setBounds(355, 38, 116, 20);
 			PanelDatosSolicitud.add(txtIdiomas);
 			txtIdiomas.setColumns(10);
 
-			btnAgregarIdioma = new JButton("Agregar");
-			btnAgregarIdioma.setEnabled(false);
-			btnAgregarIdioma.addActionListener(new ActionListener()
-			{
-				public void actionPerformed(ActionEvent e)
-				{
-					idiomasAux.add(txtIdiomas.getText());
-					txtIdiomas.setText("");
-					btnAgregarIdioma.setEnabled(false);
-				}
-			});
-			btnAgregarIdioma.setBounds(442, 114, 97, 25);
-			PanelDatosSolicitud.add(btnAgregarIdioma);
-
 			JLabel label = new JLabel("Ciudad:");
-			label.setBounds(12, 146, 46, 14);
+			label.setBounds(12, 177, 46, 14);
 			PanelDatosSolicitud.add(label);
 
 			cbxCiudad = new JComboBox();
@@ -430,7 +388,7 @@ public class SolPersona extends JDialog
 					"Santiago Rodriguez", "Santo Domingo", "Valverde" }));*/
 			ciudades.add(0, "<Seleccionar>");
 			cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
-			cbxCiudad.setBounds(78, 143, 147, 20);
+			cbxCiudad.setBounds(78, 174, 147, 20);
 			PanelDatosSolicitud.add(cbxCiudad);
 
 			PanelTipoSolicitud = new JPanel();
@@ -522,10 +480,10 @@ public class SolPersona extends JDialog
 								if (rdbtnLicenciaSi.isSelected())
 									lic = true;
 
-								SoliPersona soli = new SoliPersona(txtCodigo.getText(), mov,
+								/*SoliPersona soli = new SoliPersona(txtCodigo.getText(), mov,
 										cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
 										Float.valueOf(spnSalario.getValue().toString()), idiomasAux, txtCedula.getText());
-								Bolsa.getInstance().addSolicitud(soli);
+								Bolsa.getInstance().addSolicitud(soli);*/
 								if (auxPerson.isContratado())
 									Bolsa.getInstance().desactivarSoliPersona(auxPerson.getId());
 
@@ -554,7 +512,7 @@ public class SolPersona extends JDialog
 								solicitud.setContrato(cbxContrato.getSelectedItem().toString());
 								solicitud.setSueldo(Float.valueOf(spnSalario.getValue().toString()));
 								solicitud.setCuidad(cbxCiudad.getSelectedItem().toString());
-								solicitud.setIdiomas(idiomasAux);
+								solicitud.setIdiomas(txtIdiomas.getText());
 								solicitud.setLicencia(lic);
 								solicitud.setMovilidad(mov);
 
@@ -629,7 +587,6 @@ public class SolPersona extends JDialog
 			else if (solicitud.getContrato().equalsIgnoreCase("Jornada Mixta"))
 				cbxContrato.setSelectedIndex(3);
 
-			txtCodigo.setText(solicitud.getCodigo());
 			spnSalario.setValue(solicitud.getSueldo());
 			txtIdiomas.setText("");
 
@@ -669,8 +626,6 @@ public class SolPersona extends JDialog
 				rdbtnTecnico.setSelected(true);
 			}
 
-			btnAgregarIdioma.setEnabled(false);
-
 			if (rdbtnUniversitario.isSelected() || rdbtnTecnico.isSelected())
 				cbxArea.setSelectedIndex(0);
 
@@ -683,7 +638,7 @@ public class SolPersona extends JDialog
 			else if (person instanceof Tecnico)
 				spnAgnos.setValue(((Tecnico) person).getAgnos());
 
-			idiomasAux = solicitud.getIdiomas();
+			txtIdiomas.setText(solicitud.getIdiomas());
 			ModelActividades.removeAllElements();
 		}
 	}
@@ -698,14 +653,12 @@ public class SolPersona extends JDialog
 		txtTelefono.setEditable(false);
 		txtDireccion.setEditable(false);
 		cbxContrato.setSelectedIndex(0);
-		txtCodigo.setText("SOL-" + Bolsa.getInstance().getGenSol());
 		spnSalario.setValue(new Float("1000"));
 		txtIdiomas.setText("");
 		rdbtnLicenciaNo.setSelected(true);
 		rdbtnLicenciaSi.setSelected(false);
 		rdbtnMudarseSi.setSelected(false);
 		rdbtnMudarseNo.setSelected(true);
-		btnAgregarIdioma.setEnabled(false);
 		rdbtnUniversitario.setEnabled(true);
 
 		rdbtnTecnico.setEnabled(true);
@@ -718,7 +671,6 @@ public class SolPersona extends JDialog
 			cbxCarrera.setSelectedIndex(0);
 		cbxCiudad.setSelectedIndex(0);
 		spnAgnos.setValue(new Integer("0"));
-		idiomasAux = new ArrayList<String>();
 		ModelActividades.removeAllElements();
 	}
 
@@ -729,12 +681,12 @@ public class SolPersona extends JDialog
 
 		if (rdbtnUniversitario.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0)) && (idiomasAux.size() > 0) && (cbxArea.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0)) && (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0)
 				&& (cbxCarrera.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0)))
 			validado = true;
 		else if (rdbtnTecnico.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0) && (idiomasAux.size() > 0) && (cbxArea.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0) && (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0)
 				&& (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
 	

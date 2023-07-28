@@ -31,7 +31,6 @@ public class Principal extends JFrame
 
 	private JPanel contentPane;
 	private Dimension dim = null;
-	private boolean admin = false;
 	private JMenu menuAdministracion;
 	
 	public static void main(String[] args) throws ClassNotFoundException, IOException
@@ -186,9 +185,5 @@ public class Principal extends JFrame
 		Foto.setIcon(new ImageIcon(Principal.class.getResource("/images/Fondo Principal.png")));
 		Foto.setBounds(0, 0, 1910, 985);
 		panel.add(Foto);
-/*
-		if (!admin)
-			menuAdministracion.setEnabled(false);
-*/
 	}
 }

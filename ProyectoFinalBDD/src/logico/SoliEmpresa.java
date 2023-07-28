@@ -11,9 +11,9 @@ public class SoliEmpresa extends Solicitud
 	protected int cantidad;
 
 	public SoliEmpresa(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, float sueldo,
-			ArrayList<String> idiomas, String rnc, float porcentajeMacth, String tipoSalario, int cantidad)
+			String idioma, String rnc, float porcentajeMacth, String tipoSalario, int cantidad)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idiomas);
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma);
 		this.rnc = rnc;
 		this.porcentajeMacth = porcentajeMacth;
 		this.tipoSalario = tipoSalario;
