@@ -63,7 +63,6 @@ public class SolPersona extends JDialog
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbxContrato;
 	private JSpinner spnSalario;
-	private JTextField txtIdiomas;
 	private JButton btnSolicitar;
 	private JButton btnCancelar;
 	private JTextField txtTelefono;
@@ -83,11 +82,13 @@ public class SolPersona extends JDialog
 	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
 	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
+	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
 	private Connection  conexion = Bolsa.abrirConexion();
 	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
+	private JComboBox cbxIdioma;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolPersona(SoliPersona aux)
@@ -392,11 +393,6 @@ public class SolPersona extends JDialog
 			lblNewLabel_11.setBounds(289, 40, 56, 16);
 			PanelDatosSolicitud.add(lblNewLabel_11);
 
-			txtIdiomas = new JTextField();
-			txtIdiomas.setBounds(355, 38, 116, 20);
-			PanelDatosSolicitud.add(txtIdiomas);
-			txtIdiomas.setColumns(10);
-
 			JLabel label = new JLabel("Ciudad:");
 			label.setBounds(12, 177, 46, 14);
 			PanelDatosSolicitud.add(label);
@@ -412,6 +408,12 @@ public class SolPersona extends JDialog
 			cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
 			cbxCiudad.setBounds(78, 174, 147, 20);
 			PanelDatosSolicitud.add(cbxCiudad);
+			
+			cbxIdioma = new JComboBox();
+			idiomas.add(0, "<Seleccionar>");
+			cbxIdioma.setModel(new DefaultComboBoxModel<>(idiomas.toArray(new String[0])));
+			cbxIdioma.setBounds(355, 39, 131, 22);
+			PanelDatosSolicitud.add(cbxIdioma);
 
 			PanelTipoSolicitud = new JPanel();
 			PanelTipoSolicitud.setBounds(12, 485, 561, 72);
@@ -828,6 +830,43 @@ public class SolPersona extends JDialog
 			while (rs.next()) {
 				String id = rs.getString("id_carrera");
 				String nombre = rs.getString("nombre_carrera");
+				carreras.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return carreras;
+	}
+	private ArrayList<String> obteneridiomasDesdeBaseDeDatos() {
+		ArrayList<String> carreras = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
+
+			stmt = conn.createStatement();
+
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_idioma,nombre_idioma from Idioma"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
+
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_idioma");
+				String nombre = rs.getString("nombre_idioma");
 				carreras.add(id+ " - " + nombre);
 			}
 		} catch (SQLException e) {

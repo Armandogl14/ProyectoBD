@@ -47,7 +47,6 @@ public class SolEmpresa extends JDialog
 	private JTextField txtNombre;
 	private JTextField txtTelefono;
 	private JTextField txtDireccion;
-	private JTextField txtIdiomas;
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbxArea;
 	@SuppressWarnings("rawtypes")
@@ -80,6 +79,8 @@ public class SolEmpresa extends JDialog
 	private ArrayList<String> ciudades = obtenerCiudadesDesdeBaseDeDatos();
 	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
+	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
+	private JComboBox cbxIdiomas;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolEmpresa(SoliEmpresa aux)
@@ -342,10 +343,11 @@ public class SolEmpresa extends JDialog
 					PanelDatosSolicitud.add(lblNewLabel_12);
 				}
 				{
-					txtIdiomas = new JTextField();
-					txtIdiomas.setBounds(376, 117, 123, 20);
-					PanelDatosSolicitud.add(txtIdiomas);
-					txtIdiomas.setColumns(10);
+					cbxIdiomas = new JComboBox();
+					idiomas.add(0, "<Seleccionar>");
+					cbxIdiomas.setModel(new DefaultComboBoxModel<>(idiomas.toArray(new String[0])));
+					cbxIdiomas.setBounds(379, 116, 120, 22);
+					PanelDatosSolicitud.add(cbxIdiomas);
 				}
 			}
 			{
@@ -861,4 +863,41 @@ public class SolEmpresa extends JDialog
 
 	        return carreras;
 	    }
+	 private ArrayList<String> obteneridiomasDesdeBaseDeDatos() {
+			ArrayList<String> carreras = new ArrayList<>();
+			Connection conn = null;
+			Statement stmt = null;
+			ResultSet rs = null;
+
+			try {
+				// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+				conn = Bolsa.abrirConexion();
+
+				stmt = conn.createStatement();
+
+				// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+				String sql = "select id_idioma,nombre_idioma from Idioma"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+				rs = stmt.executeQuery(sql);
+
+				// Recopilar los nombres de las ciudades en el ArrayList
+				while (rs.next()) {
+					String id = rs.getString("id_idioma");
+					String nombre = rs.getString("nombre_idioma");
+					carreras.add(id+ " - " + nombre);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				// Cerrar recursos (result set, statement y conexión)
+				try {
+					if (rs != null) rs.close();
+					if (stmt != null) stmt.close();
+					if (conn != null) conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return carreras;
+		}
 }
