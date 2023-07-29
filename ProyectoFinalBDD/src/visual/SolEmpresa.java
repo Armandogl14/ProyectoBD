@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -53,8 +54,6 @@ public class SolEmpresa extends JDialog
 	private JComboBox cbxCarrera;
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbxCiudad;
-	@SuppressWarnings("rawtypes")
-	private JComboBox cbxTipoSalario;
 	private JSpinner spnSalario;
 	@SuppressWarnings("rawtypes")
 	private JComboBox cbxContrato;
@@ -81,7 +80,13 @@ public class SolEmpresa extends JDialog
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
 	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
 	private JComboBox cbxIdiomas;
-	
+	private Connection  conexion = Bolsa.abrirConexion();
+	private String insertSoli = "Insert into Oferta_Empresa (Mobilidad, Contrato, Licencia, Nivel_Educativo_Deseado, Sueldo, Activa, RNC, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencian Porcentaje_Match) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String insertEmp = "insert into Empress (RNC, Nombre, Telefono, Direccion, id_ciudad) values (?, ?, ?, ?, ?)";
+	private String mobilidadStr = "No";
+	private String licenciaStr = "No";
+
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolEmpresa(SoliEmpresa aux)
 	{
@@ -192,12 +197,23 @@ public class SolEmpresa extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						Empresa aux = Bolsa.getInstance().buscarEmpresaByRNC(txtRNC.getText());
-						if (aux != null)
+						if (Bolsa.getInstance().existeEmpresa(txtRNC.getText()))
 						{
-							txtNombre.setText(aux.getNombre());
-							txtTelefono.setText(aux.getTelefono());
-							txtDireccion.setText(aux.getDireccion());
+							String llenar = "Select RNC, Nombre, Telefono, Direccion, id_ciudad from Empresa where RNC = "+ txtRNC.getText();
+
+							try
+							{
+								Statement stmnt = conexion.createStatement();
+								ResultSet result = stmnt.executeQuery(llenar);
+
+								txtNombre.setText(result.getString("Nombre"));
+								txtTelefono.setText(result.getString("Telefono"));
+								txtDireccion.setText(result.getString("Direccion"));
+							}
+							catch (SQLException e2)
+							{
+								// TODO: handle exception
+							}
 						}
 						else
 						{
@@ -219,32 +235,27 @@ public class SolEmpresa extends JDialog
 				PanelDatosSolicitud.setLayout(null);
 				{
 					JLabel lblNewLabel_4 = new JLabel("Contrato:");
-					lblNewLabel_4.setBounds(10, 39, 59, 14);
+					lblNewLabel_4.setBounds(10, 46, 59, 14);
 					PanelDatosSolicitud.add(lblNewLabel_4);
 				}
 				{
 					JLabel lblNewLabel_5 = new JLabel("Salario:");
-					lblNewLabel_5.setBounds(10, 92, 46, 14);
+					lblNewLabel_5.setBounds(10, 115, 46, 14);
 					PanelDatosSolicitud.add(lblNewLabel_5);
 				}
 
 				spnSalario = new JSpinner();
 				spnSalario.setModel(new SpinnerNumberModel(new Float(1000), new Float(0), null, new Float(500)));
-				spnSalario.setBounds(66, 89, 93, 20);
+				spnSalario.setBounds(66, 112, 93, 20);
 				PanelDatosSolicitud.add(spnSalario);
 				{
-					JLabel lblNewLabel_6 = new JLabel("Tipo de Salario:");
-					lblNewLabel_6.setBounds(283, 42, 127, 14);
-					PanelDatosSolicitud.add(lblNewLabel_6);
-				}
-				{
 					JLabel lblNewLabel_7 = new JLabel("Ciudad:");
-					lblNewLabel_7.setBounds(10, 145, 46, 14);
+					lblNewLabel_7.setBounds(10, 189, 46, 14);
 					PanelDatosSolicitud.add(lblNewLabel_7);
 				}
 				{
 					JLabel lblNewLabel_8 = new JLabel("Puede Mudarse:");
-					lblNewLabel_8.setBounds(293, 198, 93, 14);
+					lblNewLabel_8.setBounds(281, 112, 93, 14);
 					PanelDatosSolicitud.add(lblNewLabel_8);
 				}
 				{
@@ -257,7 +268,7 @@ public class SolEmpresa extends JDialog
 							rdbtnMudarseNo.setSelected(false);
 						}
 					});
-					rdbtnMudarseSi.setBounds(386, 194, 59, 23);
+					rdbtnMudarseSi.setBounds(374, 108, 59, 23);
 					PanelDatosSolicitud.add(rdbtnMudarseSi);
 				}
 				{
@@ -271,12 +282,12 @@ public class SolEmpresa extends JDialog
 							rdbtnMudarseSi.setSelected(false);
 						}
 					});
-					rdbtnMudarseNo.setBounds(447, 194, 52, 23);
+					rdbtnMudarseNo.setBounds(435, 108, 52, 23);
 					PanelDatosSolicitud.add(rdbtnMudarseNo);
 				}
 				{
 					JLabel lblNewLabel_9 = new JLabel("Licencia:");
-					lblNewLabel_9.setBounds(10, 198, 59, 14);
+					lblNewLabel_9.setBounds(293, 186, 59, 14);
 					PanelDatosSolicitud.add(lblNewLabel_9);
 				}
 				{
@@ -293,22 +304,15 @@ public class SolEmpresa extends JDialog
 					cbxCiudad = new JComboBox();
 					ciudades.add(0, "<Seleccionar>");
 					cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
-					cbxCiudad.setBounds(66, 142, 147, 20);
+					cbxCiudad.setBounds(66, 186, 147, 20);
 					PanelDatosSolicitud.add(cbxCiudad);
 				}
 				{
 					cbxContrato = new JComboBox();
 					cbxContrato.setModel(new DefaultComboBoxModel(
 							new String[] { "<Selecionar>", "Jornada Completa", "Media Jornada", "Jornada Mixta" }));
-					cbxContrato.setBounds(66, 36, 147, 20);
+					cbxContrato.setBounds(66, 43, 147, 20);
 					PanelDatosSolicitud.add(cbxContrato);
-				}
-				{
-					cbxTipoSalario = new JComboBox();
-					cbxTipoSalario.setModel(new DefaultComboBoxModel(
-							new String[] { "<Selecionar>", "Quincenal", "Mensual", "Semanal", "Diario" }));
-					cbxTipoSalario.setBounds(376, 39, 123, 20);
-					PanelDatosSolicitud.add(cbxTipoSalario);
 				}
 				{
 					rdbtnLicenciaSi = new JRadioButton("Si");
@@ -320,7 +324,7 @@ public class SolEmpresa extends JDialog
 							rdbtnLicenciaNo.setSelected(false);
 						}
 					});
-					rdbtnLicenciaSi.setBounds(66, 194, 59, 23);
+					rdbtnLicenciaSi.setBounds(349, 182, 59, 23);
 					PanelDatosSolicitud.add(rdbtnLicenciaSi);
 				}
 				{
@@ -334,19 +338,19 @@ public class SolEmpresa extends JDialog
 							rdbtnLicenciaSi.setSelected(false);
 						}
 					});
-					rdbtnLicenciaNo.setBounds(127, 194, 52, 23);
+					rdbtnLicenciaNo.setBounds(410, 182, 52, 23);
 					PanelDatosSolicitud.add(rdbtnLicenciaNo);
 				}
 				{
 					JLabel lblNewLabel_12 = new JLabel("Idioma:");
-					lblNewLabel_12.setBounds(305, 120, 59, 14);
+					lblNewLabel_12.setBounds(293, 43, 59, 14);
 					PanelDatosSolicitud.add(lblNewLabel_12);
 				}
 				{
 					cbxIdiomas = new JComboBox();
 					idiomas.add(0, "<Seleccionar>");
 					cbxIdiomas.setModel(new DefaultComboBoxModel<>(idiomas.toArray(new String[0])));
-					cbxIdiomas.setBounds(379, 116, 120, 22);
+					cbxIdiomas.setBounds(367, 39, 120, 22);
 					PanelDatosSolicitud.add(cbxIdiomas);
 				}
 			}
@@ -358,7 +362,7 @@ public class SolEmpresa extends JDialog
 				panel.add(PanelTipoSolicitud);
 				PanelTipoSolicitud.setLayout(null);
 
-				rdbtnUniversitario = new JRadioButton("Universatario");
+				rdbtnUniversitario = new JRadioButton("Universitario");
 				rdbtnUniversitario.addMouseListener(new MouseAdapter()
 				{
 					@Override
@@ -448,7 +452,7 @@ public class SolEmpresa extends JDialog
 			});*/
 			areas.add(0, "<Seleccionar>");
 			carreras.add(0, "<Seleccionar>");
-			
+
 			cbxArea.setBounds(67, 49, 208, 20);
 			PanelAptidutes.add(cbxArea);
 			{
@@ -505,42 +509,79 @@ public class SolEmpresa extends JDialog
 							if (validar())
 							{
 								Solicitud solicitudNew = null;
-								Empresa empresa = Bolsa.getInstance().buscarEmpresaByRNC(txtRNC.getText());
-								if (empresa == null)
+								if (!Bolsa.getInstance().existeEmpresa(txtRNC.getText()))
 								{
-									empresa = new Empresa(txtRNC.getText(), txtNombre.getText(), txtTelefono.getText(),
-											txtDireccion.getText());
-									Bolsa.getInstance().addEmpresa(empresa);
+									try
+									{
+										PreparedStatement queryEmp = conexion.prepareStatement(insertEmp);
+
+										queryEmp.setString(1, txtRNC.getText());
+										queryEmp.setString(2, txtNombre.getText());
+										queryEmp.setString(3, txtTelefono.getText());
+										queryEmp.setString(4, txtDireccion.getText());
+										queryEmp.setString(5, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										int filasInsertadas = queryEmp.executeUpdate();
+									}
+									catch (SQLException e2)
+									{
+										// TODO: handle exception
+									}
 								}
 								if (rdbtnMudarseSi.isSelected())
-									mov = true;
+									mobilidadStr = "Si";
 
 								if (rdbtnLicenciaSi.isSelected())
-									lic = true;
-/*
-								if (rdbtnUniversitario.isSelected())
+									licenciaStr = "Si";
+
+								try
 								{
-									solicitudNew = new EmpUniversitario(txtCodigo.getText(), mov,
-											cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
-											txtRNC.getText(), Float.valueOf(spnPorcentaje.getValue().toString()),
-											cbxTipoSalario.getSelectedItem().toString(),
-											Float.valueOf(spnSalario.getValue().toString()), idiomasAux,
-											Integer.valueOf(spnCantidad.getValue().toString()),
-											cbxCarrera.getSelectedItem().toString(),
-											Integer.valueOf(spnAgnos.getValue().toString()));
+									if (rdbtnUniversitario.isSelected())
+									{
+										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
+
+										querySoliP.setString(1, mobilidadStr);
+										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
+										querySoliP.setString(3, licenciaStr);
+										querySoliP.setString(4, "Universitario");
+										querySoliP.setFloat(5, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setString(6, "Si");
+										querySoliP.setString(7, txtRNC.getText());
+										querySoliP.setString(8, cbxCarrera.getSelectedItem().toString().substring(0, cbxCarrera.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(9, null);
+										querySoliP.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+										querySoliP.setFloat(13, Float.valueOf(spnSalario.getValue().toString()));
+										
+										int filasInsertadas = querySoliP.executeUpdate();
+									}
+
+									else if(rdbtnTecnico.isSelected()) {
+										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
+
+										querySoliP.setString(1, mobilidadStr);
+										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
+										querySoliP.setString(3, licenciaStr);
+										querySoliP.setString(4, "Tecnico");
+										querySoliP.setFloat(5, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setString(6, "Si");
+										querySoliP.setString(7, txtRNC.getText());
+										querySoliP.setString(8, null);
+										querySoliP.setString(9, cbxArea.getSelectedItem().toString().substring(0, cbxArea.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+										querySoliP.setFloat(13, Float.valueOf(spnSalario.getValue().toString()));
+
+										int filasInsertadas = querySoliP.executeUpdate();
+									}
 								}
-								else if (rdbtnTecnico.isSelected())
+								catch (SQLException e2)
 								{
-									solicitudNew = new EmpTecnico(txtCodigo.getText(), mov,
-											cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
-											txtRNC.getText(), Float.valueOf(spnPorcentaje.getValue().toString()),
-											cbxTipoSalario.getSelectedItem().toString(),
-											Float.valueOf(spnSalario.getValue().toString()), idiomasAux,
-											Integer.valueOf(spnCantidad.getValue().toString()),
-											cbxArea.getSelectedItem().toString(), Integer.valueOf(spnAgnos.getValue().toString()));
+									// TODO: handle exception
 								}
-						*/
-								Bolsa.getInstance().addSolicitud(solicitudNew);
+
+
 								JOptionPane.showMessageDialog(null, "Solicitud Ingresada", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
 								clean();
@@ -561,9 +602,8 @@ public class SolEmpresa extends JDialog
 
 								solicitud.setContrato(cbxContrato.getSelectedItem().toString());
 								solicitud.setSueldo(Float.valueOf(spnSalario.getValue().toString()));
-								solicitud.setTipoSalario(cbxTipoSalario.getSelectedItem().toString());
 								solicitud.setCuidad(cbxCiudad.getSelectedItem().toString());
-								solicitud.setIdiomas(txtIdiomas.getText());
+								//solicitud.setIdiomas(txtIdiomas.getText());
 								solicitud.setLicencia(lic);
 								solicitud.setPorcentajeMacth(Float.valueOf(spnPorcentaje.getValue().toString()));
 								if (solicitud instanceof EmpUniversitario)
@@ -641,7 +681,7 @@ public class SolEmpresa extends JDialog
 
 			//txtCodigo.setText(solicitud.getCodigo());
 			spnSalario.setValue(solicitud.getSueldo());
-			txtIdiomas.setText("");
+			//txtIdiomas.setText("");
 
 			if (solicitud.isLicencia())
 			{
@@ -683,22 +723,13 @@ public class SolEmpresa extends JDialog
 
 			cbxCiudad.setSelectedIndex(0);
 
-			if (solicitud.getTipoSalario().equalsIgnoreCase("Quincenal"))
-				cbxTipoSalario.setSelectedIndex(1);
-			else if (solicitud.getTipoSalario().equalsIgnoreCase("Mensual"))
-				cbxTipoSalario.setSelectedIndex(2);
-			else if (solicitud.getTipoSalario().equalsIgnoreCase("Semanal"))
-				cbxTipoSalario.setSelectedIndex(3);
-			else if (solicitud.getTipoSalario().equalsIgnoreCase("Diario"))
-				cbxTipoSalario.setSelectedIndex(4);
-
 			spnAgnos.setValue(new Integer("0"));
 			if (solicitud instanceof EmpUniversitario)
 				spnAgnos.setValue(((EmpUniversitario) solicitud).getAgnos());
 			else if (solicitud instanceof EmpTecnico)
 				spnAgnos.setValue(((EmpTecnico) solicitud).getAgnos());
 
-			txtIdiomas.setText(solicitud.getIdiomas());
+			//txtIdiomas.setText(solicitud.getIdiomas());
 			ModelActividades.removeAllElements();
 			spnPorcentaje.setValue(solicitud.getPorcentajeMacth());
 		}
@@ -715,7 +746,7 @@ public class SolEmpresa extends JDialog
 		txtDireccion.setEditable(false);
 		cbxContrato.setSelectedIndex(0);
 		spnSalario.setValue(new Float("1000"));
-		txtIdiomas.setText("");
+		//txtIdiomas.setText("");
 		rdbtnLicenciaNo.setSelected(true);
 		rdbtnLicenciaSi.setSelected(false);
 		rdbtnMudarseSi.setSelected(false);
@@ -727,7 +758,6 @@ public class SolEmpresa extends JDialog
 		if (rdbtnUniversitario.isSelected())
 			cbxCarrera.setSelectedIndex(0);
 		cbxCiudad.setSelectedIndex(0);
-		cbxTipoSalario.setSelectedIndex(0);
 		spnAgnos.setValue(new Integer("0"));
 		ModelActividades.removeAllElements();
 		spnPorcentaje.setValue(new Float("10"));
@@ -740,164 +770,162 @@ public class SolEmpresa extends JDialog
 
 		if (rdbtnUniversitario.isSelected() && (((txtRNC.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0) && (cbxTipoSalario.getSelectedIndex() > 0)
-				&& (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0) && (cbxCarrera.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0) && (cbxIdiomas.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0) && (cbxCarrera.getSelectedIndex() > 0)
 				&& (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
 		else if (rdbtnTecnico.isSelected() && (((txtRNC.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0) && (cbxTipoSalario.getSelectedIndex() > 0)
-				&& (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0))))
+				&& (cbxContrato.getSelectedIndex() > 0) && (cbxIdiomas.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
 
 		return validado;
 	}
 	private ArrayList<String> obtenerCiudadesDesdeBaseDeDatos() {
-		 ArrayList<String> ciudades = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
+		ArrayList<String> ciudades = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
 
-	            stmt = conn.createStatement();
+			stmt = conn.createStatement();
 
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
 
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String ciudad = rs.getString("id_ciudad");
-	                String ciudad_nombre = rs.getString("nombre_ciudad");
-	                ciudades.add(ciudad+ " - " + ciudad_nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-
-	        return ciudades;
-	    }
-	 private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
-		 ArrayList<String> areas = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
-
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
-
-	            stmt = conn.createStatement();
-
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
-
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String id = rs.getString("id_area");
-	                String nombre = rs.getString("nombre_area");
-	                areas.add(id+ " - " + nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-
-	        return areas;
-	    }
-	 private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
-		 ArrayList<String> carreras = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
-
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
-
-	            stmt = conn.createStatement();
-
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
-
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String id = rs.getString("id_carrera");
-	                String nombre = rs.getString("nombre_carrera");
-	                carreras.add(id+ " - " + nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-
-	        return carreras;
-	    }
-	 private ArrayList<String> obteneridiomasDesdeBaseDeDatos() {
-			ArrayList<String> carreras = new ArrayList<>();
-			Connection conn = null;
-			Statement stmt = null;
-			ResultSet rs = null;
-
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String ciudad = rs.getString("id_ciudad");
+				String ciudad_nombre = rs.getString("nombre_ciudad");
+				ciudades.add(ciudad+ " - " + ciudad_nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
 			try {
-				// Obtener la conexión con la base de datos usando tu función para abrir la conexión
-				conn = Bolsa.abrirConexion();
-
-				stmt = conn.createStatement();
-
-				// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-				String sql = "select id_idioma,nombre_idioma from Idioma"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-				rs = stmt.executeQuery(sql);
-
-				// Recopilar los nombres de las ciudades en el ArrayList
-				while (rs.next()) {
-					String id = rs.getString("id_idioma");
-					String nombre = rs.getString("nombre_idioma");
-					carreras.add(id+ " - " + nombre);
-				}
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-			} finally {
-				// Cerrar recursos (result set, statement y conexión)
-				try {
-					if (rs != null) rs.close();
-					if (stmt != null) stmt.close();
-					if (conn != null) conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 			}
-
-			return carreras;
 		}
+
+		return ciudades;
+	}
+	private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
+		ArrayList<String> areas = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
+
+			stmt = conn.createStatement();
+
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
+
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_area");
+				String nombre = rs.getString("nombre_area");
+				areas.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return areas;
+	}
+	private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
+		ArrayList<String> carreras = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
+
+			stmt = conn.createStatement();
+
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
+
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_carrera");
+				String nombre = rs.getString("nombre_carrera");
+				carreras.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return carreras;
+	}
+	private ArrayList<String> obteneridiomasDesdeBaseDeDatos() {
+		ArrayList<String> carreras = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
+
+			stmt = conn.createStatement();
+
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_idioma,nombre_idioma from Idioma"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
+
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_idioma");
+				String nombre = rs.getString("nombre_idioma");
+				carreras.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return carreras;
+	}
 }

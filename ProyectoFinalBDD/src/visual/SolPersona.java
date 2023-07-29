@@ -84,7 +84,7 @@ public class SolPersona extends JDialog
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
 	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
 	private Connection  conexion = Bolsa.abrirConexion();
-	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Contrato, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
@@ -480,7 +480,6 @@ public class SolPersona extends JDialog
 						{
 							if (validar())
 							{
-
 								if (rdbtnUniversitario.isSelected())
 								{
 									try {
@@ -528,8 +527,51 @@ public class SolPersona extends JDialog
 										cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
 										Float.valueOf(spnSalario.getValue().toString()), idiomasAux, txtCedula.getText());
 								Bolsa.getInstance().addSolicitud(soli);*/
-								if (auxPerson.isContratado())
-									Bolsa.getInstance().desactivarSoliPersona(auxPerson.getId());
+								
+								try
+								{
+									if(rdbtnUniversitario.isSelected()) {
+										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
+										
+										querySoliP.setString(1, mobilidadStr);
+										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
+										querySoliP.setString(3, licenciaStr);
+										querySoliP.setString(4, "Universitario");
+										querySoliP.setFloat(5, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setString(6, "Si");
+										querySoliP.setString(7, txtCedula.getText());
+										querySoliP.setString(8, cbxCarrera.getSelectedItem().toString().substring(0, cbxCarrera.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(9, null);
+										querySoliP.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+										
+										int filasInsertadas = querySoliP.executeUpdate();
+									}
+									
+									else if(rdbtnTecnico.isSelected()) {
+										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
+										
+										querySoliP.setString(1, mobilidadStr);
+										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
+										querySoliP.setString(3, licenciaStr);
+										querySoliP.setString(4, "Universitario");
+										querySoliP.setFloat(5, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setString(6, "Si");
+										querySoliP.setString(7, txtCedula.getText());
+										querySoliP.setString(8, null);
+										querySoliP.setString(9, cbxArea.getSelectedItem().toString().substring(0, cbxArea.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+										
+										int filasInsertadas = querySoliP.executeUpdate();
+									}
+								}
+								catch (SQLException e2)
+								{
+									// TODO: handle exception
+								}
 
 								JOptionPane.showMessageDialog(null, "Solicitud Ingresada", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
@@ -556,7 +598,7 @@ public class SolPersona extends JDialog
 								solicitud.setContrato(cbxContrato.getSelectedItem().toString());
 								solicitud.setSueldo(Float.valueOf(spnSalario.getValue().toString()));
 								solicitud.setCuidad(cbxCiudad.getSelectedItem().toString());
-								solicitud.setIdiomas(txtIdiomas.getText());
+								//solicitud.setIdiomas(txtIdiomas.getText());
 								solicitud.setLicencia(lic);
 								solicitud.setMovilidad(mov);
 
@@ -632,7 +674,7 @@ public class SolPersona extends JDialog
 				cbxContrato.setSelectedIndex(3);
 
 			spnSalario.setValue(solicitud.getSueldo());
-			txtIdiomas.setText("");
+			//txtIdiomas.setText("");
 
 			if (solicitud.isLicencia())
 			{
@@ -682,7 +724,7 @@ public class SolPersona extends JDialog
 			else if (person instanceof Tecnico)
 				spnAgnos.setValue(((Tecnico) person).getAgnos());
 
-			txtIdiomas.setText(solicitud.getIdiomas());
+			//txtIdiomas.setText(solicitud.getIdiomas());
 			ModelActividades.removeAllElements();
 		}
 	}
@@ -698,7 +740,7 @@ public class SolPersona extends JDialog
 		txtDireccion.setEditable(false);
 		cbxContrato.setSelectedIndex(0);
 		spnSalario.setValue(new Float("1000"));
-		txtIdiomas.setText("");
+		cbxIdioma.setSelectedIndex(0);;
 		rdbtnLicenciaNo.setSelected(true);
 		rdbtnLicenciaSi.setSelected(false);
 		rdbtnMudarseSi.setSelected(false);
@@ -725,12 +767,12 @@ public class SolPersona extends JDialog
 
 		if (rdbtnUniversitario.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0)) && (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0)) && (cbxIdioma.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0)
 				&& (cbxCarrera.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0)))
 			validado = true;
 		else if (rdbtnTecnico.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0) && (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0) && (cbxIdioma.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0)
 				&& (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
 

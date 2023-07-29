@@ -27,7 +27,6 @@ public class Bolsa implements Serializable
 	private ArrayList<Empresa> empresas;
 	private ArrayList<Usuario> usuarios;
 	private static Bolsa bolsa = null;
-	private static Usuario loginUser;
 	public int genSol;
 	private static final String DB_URL = "jdbc:sqlserver://192.168.100.118:1433;databaseName=Bolsa_Empleo_Grupo1;encrypt=false";
 	private static final String USERNAME = "mrodriguez";
@@ -103,17 +102,6 @@ public class Bolsa implements Serializable
 	public void setUsuarios(ArrayList<Usuario> usuarios)
 	{
 		this.usuarios = usuarios;
-	}
-
-	public static Usuario getLoginUser()
-	{
-		return loginUser;
-	}
-	
-
-	public static void setLoginUser(Usuario loginUser)
-	{
-		Bolsa.loginUser = loginUser;
 	}
 
 	public int getGenSol()
@@ -312,12 +300,24 @@ public class Bolsa implements Serializable
 	public boolean confirmarLogin(String username, String password)
 	{
 		boolean login = false;
-		for (Usuario user : usuarios)
-			if (user.getUsername().equals(username) && user.getPassword().equals(password))
-			{
-				setLoginUser(user);
-				login = true;
+		Connection conexion = abrirConexion();
+		String select = "select username, cotrasenia from Usuario";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("username").equalsIgnoreCase(username) && result.getString("contrasenia").equalsIgnoreCase(password))
+					login = true;
 			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
 		return login;
 	}
 
@@ -650,8 +650,8 @@ public class Bolsa implements Serializable
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
 			
-			if(result)			
-			}
+			if(result.getString("Contratado").equalsIgnoreCase("Si"))
+				contratado = true;
 		}
 		catch (SQLException e)
 		{
