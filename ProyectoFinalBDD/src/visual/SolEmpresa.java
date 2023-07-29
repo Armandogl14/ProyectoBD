@@ -81,8 +81,8 @@ public class SolEmpresa extends JDialog
 	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
 	private JComboBox cbxIdiomas;
 	private Connection  conexion = Bolsa.abrirConexion();
-	private String insertSoli = "Insert into Oferta_Empresa (Mobilidad, Contrato, Licencia, Nivel_Educativo_Deseado, Sueldo, Activa, RNC, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencian Porcentaje_Match) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private String insertEmp = "insert into Empress (RNC, Nombre, Telefono, Direccion, id_ciudad) values (?, ?, ?, ?, ?)";
+	private String insertSoli = "Insert into Oferta_Empresa (Mobilidad, Contrato, Licencia, Nivel_Educativo_Deseado, Sueldo, Activa, RNC, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia, Porcentaje_Match) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String insertEmp = "insert into Empresa (RNC, Nombre, Telefono, Direccion, id_ciudad) values (?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
 
@@ -524,7 +524,8 @@ public class SolEmpresa extends JDialog
 									}
 									catch (SQLException e2)
 									{
-										// TODO: handle exception
+							            System.err.println("Error al conectar con SQL Server: " + e2.getMessage());
+
 									}
 								}
 								if (rdbtnMudarseSi.isSelected())
@@ -551,7 +552,7 @@ public class SolEmpresa extends JDialog
 										querySoliP.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
-										querySoliP.setFloat(13, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setFloat(13, Float.valueOf(spnPorcentaje.getValue().toString()));
 										
 										int filasInsertadas = querySoliP.executeUpdate();
 									}
@@ -571,14 +572,15 @@ public class SolEmpresa extends JDialog
 										querySoliP.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
-										querySoliP.setFloat(13, Float.valueOf(spnSalario.getValue().toString()));
+										querySoliP.setFloat(13, Float.valueOf(spnPorcentaje.getValue().toString()));
 
 										int filasInsertadas = querySoliP.executeUpdate();
 									}
 								}
 								catch (SQLException e2)
 								{
-									// TODO: handle exception
+						            System.err.println("Error al crear Solicitud: " + e2.getMessage());
+
 								}
 
 

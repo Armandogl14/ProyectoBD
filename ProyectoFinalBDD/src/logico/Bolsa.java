@@ -203,7 +203,7 @@ public class Bolsa implements Serializable
                String compardor = resultSet.getString(resultSet.getString("Cedula"));
             	if(compardor.equalsIgnoreCase(cedula)) {
             		aux.setNombre(resultSet.getString("Nombre"));
-                    aux.setId(resultSet.getString("Cedula"));
+                    aux.setId(resultSet.getString("cedula"));
                     aux.setDireccion(resultSet.getString("Direccion"));
                     aux.setTelefono(resultSet.getString("Telefono"));
             	}

@@ -84,7 +84,7 @@ public class SolPersona extends JDialog
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
 	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
 	private Connection  conexion = Bolsa.abrirConexion();
-	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Contrato, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Contrato, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
@@ -570,7 +570,8 @@ public class SolPersona extends JDialog
 								}
 								catch (SQLException e2)
 								{
-									// TODO: handle exception
+						            System.err.println("Error al crear solicitud: " + e2.getMessage());
+
 								}
 
 								JOptionPane.showMessageDialog(null, "Solicitud Ingresada", "Informacion",
