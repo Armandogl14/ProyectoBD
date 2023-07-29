@@ -88,7 +88,7 @@ public class SolPersona extends JDialog
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolPersona(SoliPersona aux)
 	{
@@ -159,23 +159,35 @@ public class SolPersona extends JDialog
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					Persona aux = Bolsa.getInstance().buscarPersonaByCedula(txtCedula.getText());
-					if (aux != null)
+					if (Bolsa.getInstance().existePersona(txtCedula.getText()))
 					{
-						txtNombre.setText(aux.getNombre());
-						txtTelefono.setText(aux.getTelefono());
-						txtDireccion.setText(aux.getDireccion());
-						if (aux instanceof Universitario)
-						{
-							rdbtnUniversitario.setSelected(true);
-							rdbtnTecnico.setEnabled(false);
+						String llenar = "select Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad from Persona where Cedula = " + txtCedula.getText();
 
-						}
-						else if (aux instanceof Tecnico)
+						try
 						{
-							rdbtnUniversitario.setSelected(false);
-							rdbtnTecnico.setSelected(true);
-							rdbtnUniversitario.setEnabled(false);
+							Statement stmnt = conexion.createStatement();
+							ResultSet result = stmnt.executeQuery(llenar);
+
+							txtNombre.setText(result.getString("Nombre"));
+							txtTelefono.setText(result.getString("Telefono"));
+							txtDireccion.setText(result.getString("Direccion"));
+
+							if (result.getString("Nivel_Educativo").equalsIgnoreCase("Universitario"))
+							{
+								rdbtnUniversitario.setSelected(true);
+								rdbtnTecnico.setEnabled(false);
+
+							}
+							else if (result.getString("Nivel_Educativo").equalsIgnoreCase("Tecnico"))
+							{
+								rdbtnUniversitario.setSelected(false);
+								rdbtnTecnico.setSelected(true);
+								rdbtnUniversitario.setEnabled(false);
+							}
+						}
+						catch (SQLException e2)
+						{
+							// TODO: handle exception
 						}
 					}
 					else
@@ -221,7 +233,7 @@ public class SolPersona extends JDialog
 
 			PanelAptitudes = new JPanel();
 			PanelAptitudes
-					.setBorder(new TitledBorder(null, "Aptitudes:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+			.setBorder(new TitledBorder(null, "Aptitudes:", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 			PanelAptitudes.setBounds(12, 568, 561, 186);
 			panel.add(PanelAptitudes);
 			PanelAptitudes.setLayout(null);
@@ -423,10 +435,10 @@ public class SolPersona extends JDialog
 					cbxCarrera.setModel(new DefaultComboBoxModel<>(carreras.toArray(new String[0])));
 					lblagnos.setVisible(true);
 					spnAgnos.setVisible(true);
-					
+
 				}
 			});
-			
+
 			rdbtnUniversitario.setSelected(true);
 			rdbtnUniversitario.setBounds(117, 27, 108, 23);
 			PanelTipoSolicitud.add(rdbtnUniversitario);
@@ -466,43 +478,43 @@ public class SolPersona extends JDialog
 						{
 							if (validar())
 							{
-								Persona auxPerson = Bolsa.getInstance().buscarPersonaByCedula(txtCedula.getText());
-								if (auxPerson == null)
-								{
-									if (rdbtnUniversitario.isSelected())
-									{
-										try {
-											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
-											
-											queryPerson.setString(1, txtCedula.getText());
-											queryPerson.setString(2, txtNombre.getText());
-											queryPerson.setString(3, txtTelefono.getText());
-											queryPerson.setString(4, txtDireccion.getText());
-											queryPerson.setString(5, "No");
-											queryPerson.setString(6, "Universitario");
-											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
-										} catch (SQLException e1){
-											System.err.println("Error.");
-										}
-									}
 
-									else if (rdbtnTecnico.isSelected())
-									{
-										try {
-											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
-											
-											queryPerson.setString(1, txtCedula.getText());
-											queryPerson.setString(2, txtNombre.getText());
-											queryPerson.setString(3, txtTelefono.getText());
-											queryPerson.setString(4, txtDireccion.getText());
-											queryPerson.setString(5, "No");
-											queryPerson.setString(6, "Tecnico");
-											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
-										} catch (SQLException e1){
-											System.err.println("Error.");
-										}
+								if (rdbtnUniversitario.isSelected())
+								{
+									try {
+										PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+
+										queryPerson.setString(1, txtCedula.getText());
+										queryPerson.setString(2, txtNombre.getText());
+										queryPerson.setString(3, txtTelefono.getText());
+										queryPerson.setString(4, txtDireccion.getText());
+										queryPerson.setString(5, "No");
+										queryPerson.setString(6, "Universitario");
+										queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										int filasInsertadas = queryPerson.executeUpdate();
+									} catch (SQLException e1){
+										System.err.println("Error.");
 									}
 								}
+
+								else if (rdbtnTecnico.isSelected())
+								{
+									try {
+										PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+
+										queryPerson.setString(1, txtCedula.getText());
+										queryPerson.setString(2, txtNombre.getText());
+										queryPerson.setString(3, txtTelefono.getText());
+										queryPerson.setString(4, txtDireccion.getText());
+										queryPerson.setString(5, "No");
+										queryPerson.setString(6, "Tecnico");
+										queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+										int filasInsertadas = queryPerson.executeUpdate();
+									} catch (SQLException e1){
+										System.err.println("Error.");
+									}
+								}
+
 
 								if (rdbtnMudarseSi.isSelected())
 									mobilidadStr = "Si";
@@ -719,118 +731,118 @@ public class SolPersona extends JDialog
 				&& (cbxContrato.getSelectedIndex() > 0) && (txtIdiomas.getText().length() > 1) && (cbxArea.getSelectedIndex() > 0)
 				&& (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
-	
+
 		return validado;
 	}
-	 private ArrayList<String> obtenerCiudadesDesdeBaseDeDatos() {
-		 ArrayList<String> ciudades = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
+	private ArrayList<String> obtenerCiudadesDesdeBaseDeDatos() {
+		ArrayList<String> ciudades = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
 
-	            stmt = conn.createStatement();
+			stmt = conn.createStatement();
 
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
 
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String ciudad = rs.getString("id_ciudad");
-	                String ciudad_nombre = rs.getString("nombre_ciudad");
-	                ciudades.add(ciudad+ " - " + ciudad_nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String ciudad = rs.getString("id_ciudad");
+				String ciudad_nombre = rs.getString("nombre_ciudad");
+				ciudades.add(ciudad+ " - " + ciudad_nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
-	        return ciudades;
-	    }
-	 private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
-		 ArrayList<String> areas = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
+		return ciudades;
+	}
+	private ArrayList<String> obtenerAreasDesdeBaseDeDatos() {
+		ArrayList<String> areas = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
 
-	            stmt = conn.createStatement();
+			stmt = conn.createStatement();
 
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_area, nombre_area from Area"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
 
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String id = rs.getString("id_area");
-	                String nombre = rs.getString("nombre_area");
-	                areas.add(id+ " - " + nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_area");
+				String nombre = rs.getString("nombre_area");
+				areas.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
-	        return areas;
-	    }
-	 private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
-		 ArrayList<String> carreras = new ArrayList<>();
-	        Connection conn = null;
-	        Statement stmt = null;
-	        ResultSet rs = null;
+		return areas;
+	}
+	private ArrayList<String> obtenerCarrerassDesdeBaseDeDatos() {
+		ArrayList<String> carreras = new ArrayList<>();
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 
-	        try {
-	            // Obtener la conexión con la base de datos usando tu función para abrir la conexión
-	            conn = Bolsa.abrirConexion();
+		try {
+			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
+			conn = Bolsa.abrirConexion();
 
-	            stmt = conn.createStatement();
+			stmt = conn.createStatement();
 
-	            // Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-	            String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
-	            rs = stmt.executeQuery(sql);
+			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
+			String sql = "select id_carrera,nombre_carrera from Carrera"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			rs = stmt.executeQuery(sql);
 
-	            // Recopilar los nombres de las ciudades en el ArrayList
-	            while (rs.next()) {
-	                String id = rs.getString("id_carrera");
-	                String nombre = rs.getString("nombre_carrera");
-	                carreras.add(id+ " - " + nombre);
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        } finally {
-	            // Cerrar recursos (result set, statement y conexión)
-	            try {
-	                if (rs != null) rs.close();
-	                if (stmt != null) stmt.close();
-	                if (conn != null) conn.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
+			// Recopilar los nombres de las ciudades en el ArrayList
+			while (rs.next()) {
+				String id = rs.getString("id_carrera");
+				String nombre = rs.getString("nombre_carrera");
+				carreras.add(id+ " - " + nombre);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// Cerrar recursos (result set, statement y conexión)
+			try {
+				if (rs != null) rs.close();
+				if (stmt != null) stmt.close();
+				if (conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
-	        return carreras;
-	    }
+		return carreras;
+	}
 }

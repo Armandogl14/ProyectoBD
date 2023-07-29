@@ -542,6 +542,122 @@ public class Bolsa implements Serializable
 		
 		return existe;
 	}
-
-
+	
+	public boolean existePersona(String Cedula)
+	{
+		boolean existe = false;
+		Connection conexion = abrirConexion();
+		String select = "select Cedula from Persona";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("Cedula").equalsIgnoreCase(Cedula))
+					existe = true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return existe;
+	}
+	
+	public boolean existeEmpresa(String RNC)
+	{
+		boolean existe = false;
+		Connection conexion = abrirConexion();
+		String select = "select RNC from Espresa";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("RNC").equalsIgnoreCase(RNC))
+					existe = true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return existe;
+	}
+	
+	public boolean existeSoliPersona(String code)
+	{
+		boolean existe = false;
+		Connection conexion = abrirConexion();
+		String select = "select Codigo from Solicitud_Persona";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("Codigo").equalsIgnoreCase(code))
+					existe = true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return existe;
+	}
+	
+	public boolean existeOfertaEmpresa(String code)
+	{
+		boolean existe = false;
+		Connection conexion = abrirConexion();
+		String select = "select Codigo from Oferta_Empresa";
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			while(result.next()) {
+				if(result.getString("Codigo").equalsIgnoreCase(code))
+					existe = true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return existe;
+	}
+	
+	public boolean isContratado(String Cedula)
+	{
+		boolean contratado = false;
+		Connection conexion = abrirConexion();
+		String select = "select Cedula, Contratado from Persona where Cedula = "+Cedula;
+		
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+			
+			if(result)			
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return contratado;
+	}
 }
