@@ -90,7 +90,7 @@ public class Principal extends JFrame
 		});
 		mnNewMenu.add(mntmNewMenuItem_5);
 
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Listar");
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Listar Solicitudes");
 		mntmNewMenuItem_1.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -101,6 +101,16 @@ public class Principal extends JFrame
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem_1);
+		
+		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Listar Ofertas");
+		mntmNewMenuItem_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				List_oferta ofertas = new List_oferta(false);
+				ofertas.setModal(true);
+				ofertas.setVisible(true);
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem_7);
 
 		JMenu mnNewMenu_1 = new JMenu("Personas");
 		menuBar.add(mnNewMenu_1);

@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -69,7 +74,7 @@ public class List_oferta extends JDialog
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
 					model = new DefaultTableModel();
-					String[] columnas = { "Codigo", "Cliente", "Cedula/RNC", "Nombre", "Tipo", "Cantidad", "Estado" };
+					String[] columnas = { "Codigo", "RNC", "Nivel_Educativo", "Contrato", "Mobilidad", "Licencia", "Sueldo","id_carrera","id_area","id_idioma","id_ciudad","Activa"};
 					model.setColumnIdentifiers(columnas);
 					table = new JTable();
 					table.addMouseListener(new MouseAdapter()
@@ -205,7 +210,32 @@ public class List_oferta extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
-		for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
+		String selectQuery = "select Codigo, RNC, Nivel_Educativo_Deseado, Contrato, Mobilidad, Licencia, Sueldo,id_carrera,id_area,id_idioma,id_ciudad,Activa from Oferta_Empresa";
+        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+                 rows[0] = resultSet.getInt("Codigo");
+                 rows[1] = resultSet.getString("RNC");
+                 rows[2] = resultSet.getString("Nivel_Educativo_Deseado");
+                 rows[3] = resultSet.getString("Contrato");
+                 rows[4] = resultSet.getString("Mobilidad");
+                 rows[5] = resultSet.getString("Licencia");
+                 rows[6] = resultSet.getFloat("Sueldo");
+                 rows[7] = resultSet.getString("id_carrera");
+                 rows[8] = resultSet.getString("id_area");
+                 rows[9] = resultSet.getString("id_idioma");
+                 rows[10] = resultSet.getString("id_ciudad");
+                 rows[11] = resultSet.getString("Activa");
+                 model.addRow(rows);
+            }
+
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		/*for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
 		{
 			if (solicitud instanceof SoliPersona)
 				persona = Bolsa.getInstance().buscarPersonaByCedula(((SoliPersona) solicitud).getCedula());
@@ -246,6 +276,6 @@ public class List_oferta extends JDialog
 				else
 					model.addRow(rows);
 			}
-		}
+		}*/
 	}
 }

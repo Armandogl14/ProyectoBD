@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -58,7 +63,7 @@ public class ListPersonas extends JDialog
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
 					model = new DefaultTableModel();
-					String[] columnas = { "Cedula", "Nombre", "Tipo", "Telefono", "Direccion", "Estado" };
+					String[] columnas = { "Cedula", "Nombre", "Telefono", "Direccion","Contratado","Nivel_Educativo","id_ciudad"};
 					model.setColumnIdentifiers(columnas);
 					table = new JTable();
 					table.addMouseListener(new MouseAdapter()
@@ -168,18 +173,26 @@ public class ListPersonas extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
+		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado,Nivel_Educativo,id_ciudad from Persona";
+        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+                 rows[0] = resultSet.getString("Cedula");
+                 rows[1] = resultSet.getString("Nombre");
+                 rows[2] = resultSet.getString("Telefono");
+                 rows[3] = resultSet.getString("Direccion");
+                 rows[4] = resultSet.getString("Contratado");
+                 rows[5] = resultSet.getString("Nivel_Educativo");
+                 rows[6] = resultSet.getString("id_ciudad");
+                 model.addRow(rows);
+            }
 
-		for (Persona person : Bolsa.getInstance().getPersonas())
-		{
-			rows[0] = person.getId();
-			rows[1] = person.getNombre();
-			rows[2] = person instanceof Universitario ? "Universitario"
-					: person instanceof Tecnico ? "Tecnico" : "";
-			rows[3] = person.getTelefono();
-			rows[4] = person.getDireccion();
-			rows[5] = person.isContratado() ? "Contratado" : "Desempleado";
-
-			model.addRow(rows);
-		}
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	
 	}
 }

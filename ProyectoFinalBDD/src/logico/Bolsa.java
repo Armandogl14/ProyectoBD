@@ -193,15 +193,27 @@ public class Bolsa implements Serializable
 		int i = 0;
 		Persona aux = null;
 
-		while (!encontrado && i < personas.size())
-		{
-			if (personas.get(i).getId().equalsIgnoreCase(cedula))
-			{
-				encontrado = true;
-				aux = personas.get(i);
-			}
-			i++;
-		}
+		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from CIUDAD";
+        try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+               String compardor = resultSet.getString(resultSet.getString("Cedula"));
+            	if(compardor.equalsIgnoreCase(cedula)) {
+            		aux.setNombre(resultSet.getString("Nombre"));
+                    aux.setId(resultSet.getString("Cedula"));
+                    aux.setDireccion(resultSet.getString("Direccion"));
+                    aux.setTelefono(resultSet.getString("Telefono"));
+            	}
+            	
+            }
+
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		return aux;
 	}
 
@@ -211,15 +223,20 @@ public class Bolsa implements Serializable
 		int i = 0;
 		Solicitud aux = null;
 
-		while (!encontrado && i < solicitudes.size())
-		{
-			if (solicitudes.get(i).getCodigo().equalsIgnoreCase(codigo))
-			{
-				encontrado = true;
-				aux = solicitudes.get(i);
-			}
-			i++;
-		}
+		String selectQuery = "select Codigo_Ciudad,Nombre_Ciudad from CIUDAD";
+        try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+               
+            }
+
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		return aux;
 	}
 
