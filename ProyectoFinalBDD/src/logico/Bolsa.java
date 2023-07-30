@@ -1,11 +1,5 @@
 package logico;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@SuppressWarnings("unused")
 public class Bolsa implements Serializable
 {
 	private static final long serialVersionUID = 1L;
@@ -159,7 +154,7 @@ public class Bolsa implements Serializable
 	}
 
 	// Método para cerrar la conexión
-	/*public static void cerrarConexion(Connection connection) {
+	public void cerrarConexion(Connection connection) {
 	    try {
 	        if (connection != null && !connection.isClosed()) {
 	            connection.close();
@@ -168,7 +163,8 @@ public class Bolsa implements Serializable
 	    } catch (SQLException e) {
 	        System.err.println("Error al cerrar la conexión con SQL Server: " + e.getMessage());
 	    }
-	}*/
+	}
+	
 	public Empresa buscarEmpresaByRNC(String rnc)
 	{
 		/*boolean encontrado = false;
@@ -196,7 +192,7 @@ public class Bolsa implements Serializable
 			while (resultSet.next()) {
 				String comparador = resultSet.getString("RNC");
 				if (comparador.equalsIgnoreCase(rnc)) {
-					aux = new Empresa(null, null, null, null) {};
+					aux = new Empresa(null, null, null, null);
 					aux.setNombre(resultSet.getString("Nombre"));
 					aux.setRnc(resultSet.getString("RNC"));
 					aux.setDireccion(resultSet.getString("Direccion"));
@@ -210,40 +206,6 @@ public class Bolsa implements Serializable
 		return aux;
 	}
 	//=======================================================================================================
-	/*public Persona buscarPersonaByCedula(String cedula)
-	{
-		boolean encontrado = false;
-		int i = 0;
-		Persona aux = null;
-
-		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from Persona";
-        try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-             Statement statement = connection1.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectQuery)) {
-            // Recorrer el resultado del conjunto de resultados (ResultSet)
-            while (resultSet.next()) {
-               String compardor = resultSet.getString(resultSet.getString("Cedula"));
-            	if(compardor.equalsIgnoreCase(cedula)) {
-            		aux.setNombre(resultSet.getString("Nombre"));
-                    aux.setId(resultSet.getString("Cedula"));
-                    aux.setDireccion(resultSet.getString("Direccion"));
-                    aux.setTelefono(resultSet.getString("Telefono"));
-                    String contratado = resultSet.getString("Contratado");
-                    if(contratado.equalsIgnoreCase("Si")) {
-                    	aux.setContratado(true);
-                    }else {
-                    	aux.setContratado(false);
-                    }
-            	}
-
-            }
-
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return aux;
-	}*/
 	public Persona buscarPersonaByCedula(String cedula) {
 		Persona aux = null;
 
@@ -327,48 +289,7 @@ public class Bolsa implements Serializable
 
 		return aux;
 	}
-	/*public Solicitud buscarSolicitudByCodigo(int codigo) {
-		SoliPersona aux = new SoliPersona(null, true, null, true, null, (float) 0.00, null, null, null, null, 0);
-	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";
-	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	         Statement statement = connection1.createStatement();
-	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-	        // Recorrer el resultado del conjunto de resultados (ResultSet)
-	        while (resultSet.next()) {
-	            int comparador = resultSet.getInt("Codigo");
-	            if (comparador == codigo) {
-
-	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
-	                String movilidad = resultSet.getString("Mobilidad");
-	                if (movilidad.equalsIgnoreCase("Si")) {
-	                    aux.setMovilidad(true);
-	                } else {
-	                    aux.setMovilidad(false);
-	                }
-	                aux.setContrato(resultSet.getString("Contrato"));
-	                String licencia = resultSet.getString("Licencia");
-	                if (licencia.equalsIgnoreCase("Si")) {
-	                    aux.setLicencia(true);
-	                } else {
-	                    aux.setLicencia(false);
-	                }
-	                aux.setCuidad(resultSet.getString("id_ciudad"));
-	                aux.setSueldo(resultSet.getFloat("Sueldo"));
-	                aux.setIdiomas(resultSet.getString("id_idioma"));
-	                aux.setCedula(resultSet.getString("Cedula"));
-	                aux.setAniosExp(resultSet.getInt("Agnos_Experiencia"));
-	                aux.setCarrera(resultSet.getString("id_carrera"));
-	                aux.setNivel_educativo(resultSet.getString("Nivel_Educativo"));
-	                //aux.setTipoSalario(tipoSalario);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
-	    return aux;
-	}*/
 	public SoliPersona buscarSolicitudByCodigo(int codigo) {
 		SoliPersona aux = new SoliPersona(null, false, null, false, null, (float) 0.00, null, null, null, null, null , (short) 0);
 		String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";

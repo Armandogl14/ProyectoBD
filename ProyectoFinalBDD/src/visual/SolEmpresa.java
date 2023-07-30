@@ -40,7 +40,7 @@ import logico.Empresa;
 import logico.SoliEmpresa;
 import logico.Solicitud;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class SolEmpresa extends JDialog
 {
 	private final JPanel contentPanel = new JPanel();
@@ -79,13 +79,14 @@ public class SolEmpresa extends JDialog
 	private ArrayList<String> areas = obtenerAreasDesdeBaseDeDatos();
 	private ArrayList<String> carreras = obtenerCarrerassDesdeBaseDeDatos();
 	private ArrayList<String> idiomas = obteneridiomasDesdeBaseDeDatos();
+	@SuppressWarnings("rawtypes")
 	private JComboBox cbxIdiomas;
 	private Connection  conexion = Bolsa.abrirConexion();
 	private String insertSoli = "Insert into Oferta_Empresa (Mobilidad, Contrato, Licencia, Nivel_Educativo_Deseado, Sueldo, Activa, RNC, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia, Porcentaje_Match) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertEmp = "insert into Empresa (RNC, Nombre, Telefono, Direccion, id_ciudad) values (?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
-
+	private Empresa auxEmp = null;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolEmpresa(SoliEmpresa aux1)
@@ -197,23 +198,13 @@ public class SolEmpresa extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (Bolsa.getInstance().existeEmpresa(txtRNC.getText()))
+						auxEmp = Bolsa.getInstance().buscarEmpresaByRNC(txtRNC.getText());
+						if (auxEmp != null)
 						{
-							String llenar = "Select RNC, Nombre, Telefono, Direccion, id_ciudad from Empresa where RNC = "+ txtRNC.getText();
 
-							try
-							{
-								Statement stmnt = conexion.createStatement();
-								ResultSet result = stmnt.executeQuery(llenar);
-
-								txtNombre.setText(result.getString("Nombre"));
-								txtTelefono.setText(result.getString("Telefono"));
-								txtDireccion.setText(result.getString("Direccion"));
-							}
-							catch (SQLException e2)
-							{
-								System.err.println("Error");
-							}
+							txtNombre.setText(auxEmp.getNombre());
+							txtTelefono.setText(auxEmp.getTelefono());
+							txtDireccion.setText(auxEmp.getDireccion());
 						}
 						else
 						{
@@ -524,7 +515,7 @@ public class SolEmpresa extends JDialog
 									}
 									catch (SQLException e2)
 									{
-							            System.err.println("Error al conectar con SQL Server: " + e2.getMessage());
+										System.err.println("Error al conectar con SQL Server: " + e2.getMessage());
 
 									}
 								}
@@ -553,7 +544,7 @@ public class SolEmpresa extends JDialog
 										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
 										querySoliP.setFloat(13, Float.valueOf(spnPorcentaje.getValue().toString()));
-										
+
 										int filasInsertadas = querySoliP.executeUpdate();
 									}
 
@@ -579,7 +570,7 @@ public class SolEmpresa extends JDialog
 								}
 								catch (SQLException e2)
 								{
-						            System.err.println("Error al crear Solicitud: " + e2.getMessage());
+									System.err.println("Error al crear Solicitud: " + e2.getMessage());
 
 								}
 
@@ -793,7 +784,7 @@ public class SolEmpresa extends JDialog
 
 			stmt = conn.createStatement();
 
-			
+
 			String sql = "select id_ciudad, nombre_ciudad from Ciudad"; 
 			rs = stmt.executeQuery(sql);
 

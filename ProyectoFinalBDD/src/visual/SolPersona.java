@@ -42,7 +42,7 @@ import logico.SoliPersona;
 import logico.Tecnico;
 import logico.Universitario;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class SolPersona extends JDialog
 {
 
@@ -88,7 +88,9 @@ public class SolPersona extends JDialog
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
+	@SuppressWarnings("rawtypes")
 	private JComboBox cbxIdioma;
+	private Persona auxPerson = null;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SolPersona(SoliPersona aux)
@@ -160,36 +162,12 @@ public class SolPersona extends JDialog
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					if (Bolsa.getInstance().existePersona(txtCedula.getText()))
+					auxPerson = Bolsa.getInstance().buscarPersonaByCedula(txtCedula.getText());
+					if (auxPerson != null)
 					{
-						String llenar = "select Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad from Persona where Cedula = " + txtCedula.getText();
-
-						try
-						{
-							Statement stmnt = conexion.createStatement();
-							ResultSet result = stmnt.executeQuery(llenar);
-
-							txtNombre.setText(result.getString("Nombre"));
-							txtTelefono.setText(result.getString("Telefono"));
-							txtDireccion.setText(result.getString("Direccion"));
-
-							if (result.getString("Nivel_Educativo").equalsIgnoreCase("Universitario"))
-							{
-								rdbtnUniversitario.setSelected(true);
-								rdbtnTecnico.setEnabled(false);
-
-							}
-							else if (result.getString("Nivel_Educativo").equalsIgnoreCase("Tecnico"))
-							{
-								rdbtnUniversitario.setSelected(false);
-								rdbtnTecnico.setSelected(true);
-								rdbtnUniversitario.setEnabled(false);
-							}
-						}
-						catch (SQLException e2)
-						{
-							System.err.println("Error");
-						}
+						txtNombre.setText(auxPerson.getNombre());
+						txtTelefono.setText(auxPerson.getTelefono());
+						txtDireccion.setText(auxPerson.getDireccion());
 					}
 					else
 					{
@@ -408,7 +386,7 @@ public class SolPersona extends JDialog
 			cbxCiudad.setModel(new DefaultComboBoxModel<>(ciudades.toArray(new String[0])));
 			cbxCiudad.setBounds(78, 174, 147, 20);
 			PanelDatosSolicitud.add(cbxCiudad);
-			
+
 			cbxIdioma = new JComboBox();
 			idiomas.add(0, "<Seleccionar>");
 			cbxIdioma.setModel(new DefaultComboBoxModel<>(idiomas.toArray(new String[0])));
@@ -527,12 +505,12 @@ public class SolPersona extends JDialog
 										cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
 										Float.valueOf(spnSalario.getValue().toString()), idiomasAux, txtCedula.getText());
 								Bolsa.getInstance().addSolicitud(soli);*/
-								
+
 								try
 								{
 									if(rdbtnUniversitario.isSelected()) {
 										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
-										
+
 										querySoliP.setString(1, mobilidadStr);
 										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
 										querySoliP.setString(3, licenciaStr);
@@ -545,13 +523,13 @@ public class SolPersona extends JDialog
 										querySoliP.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
-										
+
 										int filasInsertadas = querySoliP.executeUpdate();
 									}
-									
+
 									else if(rdbtnTecnico.isSelected()) {
 										PreparedStatement querySoliP = conexion.prepareStatement(insertSoli);
-										
+
 										querySoliP.setString(1, mobilidadStr);
 										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
 										querySoliP.setString(3, licenciaStr);
@@ -564,13 +542,13 @@ public class SolPersona extends JDialog
 										querySoliP.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
 										querySoliP.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
-										
+
 										int filasInsertadas = querySoliP.executeUpdate();
 									}
 								}
 								catch (SQLException e2)
 								{
-						            System.err.println("Error al crear solicitud: " + e2.getMessage());
+									System.err.println("Error al crear solicitud: " + e2.getMessage());
 
 								}
 

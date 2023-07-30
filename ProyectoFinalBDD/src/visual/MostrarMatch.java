@@ -124,6 +124,7 @@ public class MostrarMatch extends JDialog
 							queryCont.setString(1, solicitudEmpresa.getRnc());
 							queryCont.setString(2, solicitudPersona.getCedula());
 							
+							@SuppressWarnings("unused")
 							int filasInsertadas = queryCont.executeUpdate();
 							
 							CallableStatement procCont = conexion.prepareCall("{call Contratar_Persona(?)}");

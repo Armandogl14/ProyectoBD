@@ -25,7 +25,7 @@ import javax.swing.border.TitledBorder;
 
 import logico.Bolsa;
 
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({ "serial", "unused" })
 public class Principal extends JFrame
 {
 
