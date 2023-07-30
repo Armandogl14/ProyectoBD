@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -66,7 +71,7 @@ public class ListCandidatos extends JDialog
 				panel.add(scrollPane, BorderLayout.CENTER);
 				{
 					model = new DefaultTableModel();
-					String[] columnas = { "Codigo", "Cedula", "Nombre", "Tipo", "Area", "Porcentaje" };
+					String[] columnas = { "Codigo", "Cedula", "Nivel", "Tipo", "Especialidad", "Porcentaje" };
 					model.setColumnIdentifiers(columnas);
 					table = new JTable();
 					table.addMouseListener(new MouseAdapter()
@@ -80,8 +85,8 @@ public class ListCandidatos extends JDialog
 							{
 								btnSelecionar.setEnabled(true);
 								btnMostrar.setEnabled(true);
-								selected = Bolsa.getInstance()
-										.buscarOfertaByCodigo(Integer.getInteger(table.getValueAt(rowSelected, 0).toString()));
+								selected = Bolsa.getInstance().buscarSolicitudByCodigo(Integer.parseInt(table.getValueAt(rowSelected, 0).toString()));
+
 							}
 						}
 					});
@@ -147,7 +152,40 @@ public class ListCandidatos extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
-		for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
+		String selectQuery = "select Codigo, Cedula, Nivel_Educativo_Deseado, id_carrera, id_area from Solicitud_Persona";
+		SoliPersona auxSolPerson = null;
+		Persona auxPerson = null;
+
+		try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+			while (resultSet.next()) {
+				auxSolPerson = Bolsa.getInstance().buscarSolicitudByCodigo(resultSet.getInt("Codigo"));		
+				auxPerson = Bolsa.getInstance().buscarPersonaByCedula(resultSet.getString("Cedula"));
+				float porcentaje = Bolsa.getInstance().match(solicitudEmpresa, auxSolPerson);
+				
+				rows[0] = resultSet.getInt("Codigo");
+				rows[1] = auxPerson.getId();
+				rows[2] = auxPerson.getNombre();
+				rows[3] = resultSet.getString("Nivel_Educativo");
+				if(resultSet.getString("Nivel_Educativo").equalsIgnoreCase("Universitario"))
+					rows[4] = resultSet.getString("id_carrera");
+				
+				if(resultSet.getString("Nivel_Educativo").equalsIgnoreCase("Tecnico"))
+					rows[4] = resultSet.getString("id_area");
+				
+				rows[5] = String.valueOf(porcentaje);
+				
+				if(porcentaje >= solicitudEmpresa.getPorcentajeMacth() && Bolsa.getInstance().isSolicitudActiva(resultSet.getInt("Codigo")))
+					model.addRow(rows);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		/*for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
 		{
 			if (solicitud instanceof SoliPersona)
 			{
@@ -177,6 +215,6 @@ public class ListCandidatos extends JDialog
 						model.addRow(rows);
 				}
 			}
-		}
+		}*/
 	}
 }

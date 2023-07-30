@@ -7,16 +7,17 @@ public class SoliPersona extends Solicitud
 	private String cedula;
 	private String nivel_educativo;
 	private String carrera;
-	private int aniosExp;
+	private String area;
+	private short aniosExp;
 
 	public SoliPersona(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, float sueldo,
-			String idioma, String cedula, String nivel_educativo,String carrera,int aniosExp)
+			String idioma, String cedula, String nivel_educativo,String carrera, String area,short aniosExp)
 	{
 		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma);
 		this.cedula = cedula;
 		this.nivel_educativo = nivel_educativo;
 		this.aniosExp = aniosExp;
-
+		this.setArea(area);
 	}
 
 	public String getCedula()
@@ -52,12 +53,22 @@ public class SoliPersona extends Solicitud
 		this.carrera = carrera;
 	}
 
-	public int getAniosExp() {
+	public short getAniosExp() {
 		return aniosExp;
 	}
 
-	public void setAniosExp(int aniosExp) {
+	public void setAniosExp(short aniosExp) {
 		this.aniosExp = aniosExp;
+	}
+
+	public String getArea()
+	{
+		return area;
+	}
+
+	public void setArea(String area)
+	{
+		this.area = area;
 	}
 
 }

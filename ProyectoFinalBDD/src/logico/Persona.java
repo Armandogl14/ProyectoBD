@@ -2,7 +2,7 @@ package logico;
 
 import java.io.Serializable;
 
-public abstract class Persona implements Serializable
+public class Persona implements Serializable
 {
 	/**
 	 * 

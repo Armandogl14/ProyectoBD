@@ -210,19 +210,23 @@ public class List_oferta extends JDialog
              ResultSet resultSet = statement.executeQuery(selectQuery)) {
             // Recorrer el resultado del conjunto de resultados (ResultSet)
             while (resultSet.next()) {
-                 rows[0] = resultSet.getInt("Codigo");
+                 rows[0] = String.valueOf(resultSet.getInt("Codigo"));
                  rows[1] = resultSet.getString("RNC");
                  rows[2] = resultSet.getString("Nivel_Educativo_Deseado");
                  rows[3] = resultSet.getString("Contrato");
                  rows[4] = resultSet.getString("Mobilidad");
                  rows[5] = resultSet.getString("Licencia");
-                 rows[6] = resultSet.getFloat("Sueldo");
+                 rows[6] = String.valueOf(resultSet.getFloat("Sueldo"));
                  rows[7] = resultSet.getString("id_carrera");
                  rows[8] = resultSet.getString("id_area");
                  rows[9] = resultSet.getString("id_idioma");
                  rows[10] = resultSet.getString("id_ciudad");
                  rows[11] = resultSet.getString("Activa");
-                 model.addRow(rows);
+                 
+                 if(match && resultSet.getString("Activa").equalsIgnoreCase("No"));
+                 
+                 else
+               	  model.addRow(rows);
             }
 
         } catch (SQLException e) {

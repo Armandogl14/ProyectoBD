@@ -150,7 +150,7 @@ public class Principal extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				ListSolicitudes listSol = new ListSolicitudes(true);
+				List_oferta listSol = new List_oferta(true);
 				listSol.setModal(true);
 				listSol.setVisible(true);
 			}

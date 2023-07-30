@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,6 +32,8 @@ public class MostrarMatch extends JDialog
 	private float porcentaje = 0;
 	private JTextField txtNombre;
 	private JTextField txtPorcentaje;
+	Connection conexion = Bolsa.abrirConexion();
+	private String insertContrato = "insert into Empresa_Contrata (RNC, Cedula) values(?,?)";
 
 	public MostrarMatch(SoliPersona solicitudPersona, SoliEmpresa solicitudEmpresa)
 	{
@@ -111,8 +117,35 @@ public class MostrarMatch extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						Bolsa.getInstance().contrarPersona(persona.getId());
-						Bolsa.getInstance().desactivarSoliPersona(persona.getId());
+						try
+						{
+							PreparedStatement queryCont = conexion.prepareStatement(insertContrato);
+							
+							queryCont.setString(1, solicitudEmpresa.getRnc());
+							queryCont.setString(2, solicitudPersona.getCedula());
+							
+							int filasInsertadas = queryCont.executeUpdate();
+							
+							CallableStatement procCont = conexion.prepareCall("{call Contratar_Persona(?)}");
+							procCont.setString(1, solicitudPersona.getCedula());
+							procCont.execute();
+							
+							CallableStatement procSol = conexion.prepareCall("{call Desactivar_Solicitud_Persona(?)}");
+							procSol.setString(1, solicitudPersona.getCodigo());
+							procSol.execute();
+							
+							CallableStatement procOf = conexion.prepareCall("{call Desactivar_Oferta_Empresa(?)}");
+							procOf.setString(1, solicitudEmpresa.getCodigo());
+							procOf.execute();
+							
+						}
+						catch (SQLException e2)
+						{
+							e2.printStackTrace();
+						}
+						
+						//Bolsa.getInstance().contrarPersona(persona.getId());
+						//Bolsa.getInstance().desactivarSoliPersona(persona.getId());
 						JOptionPane.showMessageDialog(null, "Persona contratada exitosamente.", "Informacion",
 								JOptionPane.INFORMATION_MESSAGE);
 						dispose();

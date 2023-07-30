@@ -212,7 +212,7 @@ public class SolEmpresa extends JDialog
 							}
 							catch (SQLException e2)
 							{
-								// TODO: handle exception
+								System.err.println("Error");
 							}
 						}
 						else
@@ -369,8 +369,8 @@ public class SolEmpresa extends JDialog
 					public void mouseClicked(MouseEvent e)
 					{
 						rdbtnTecnico.setSelected(false);
-						lblarea.setVisible(true);
-						cbxArea.setVisible(true);
+						lblarea.setVisible(false);
+						cbxArea.setVisible(false);
 						lblcarrera.setVisible(true);
 						cbxCarrera.setVisible(true);
 						lblagnos.setVisible(true);
@@ -409,11 +409,11 @@ public class SolEmpresa extends JDialog
 			PanelAptidutes.setLayout(null);
 
 			lblcarrera = new JLabel("Carrera:");
-			lblcarrera.setBounds(11, 118, 58, 14);
+			lblcarrera.setBounds(11, 88, 58, 14);
 			PanelAptidutes.add(lblcarrera);
 			{
 				lblarea = new JLabel("Area:");
-				lblarea.setBounds(10, 52, 46, 14);
+				lblarea.setBounds(11, 88, 46, 14);
 				PanelAptidutes.add(lblarea);
 			}
 
@@ -453,22 +453,22 @@ public class SolEmpresa extends JDialog
 			areas.add(0, "<Seleccionar>");
 			carreras.add(0, "<Seleccionar>");
 
-			cbxArea.setBounds(67, 49, 208, 20);
+			cbxArea.setBounds(68, 85, 208, 20);
 			PanelAptidutes.add(cbxArea);
 			{
 				cbxCarrera = new JComboBox();
 				cbxCarrera.setEnabled(false);
-				cbxCarrera.setBounds(67, 115, 208, 20);
+				cbxCarrera.setBounds(67, 85, 208, 20);
 				PanelAptidutes.add(cbxCarrera);
 			}
 
 			lblagnos = new JLabel("Años:");
-			lblagnos.setBounds(328, 52, 46, 14);
+			lblagnos.setBounds(329, 85, 46, 14);
 			PanelAptidutes.add(lblagnos);
 
 			spnAgnos = new JSpinner();
 			spnAgnos.setModel(new SpinnerNumberModel(0, 0, 100, 1));
-			spnAgnos.setBounds(384, 49, 110, 20);
+			spnAgnos.setBounds(385, 82, 110, 20);
 			PanelAptidutes.add(spnAgnos);
 			{
 
@@ -611,13 +611,13 @@ public class SolEmpresa extends JDialog
 								if (solicitud instanceof EmpUniversitario)
 								{
 									((EmpUniversitario) solicitud).setCarrera(cbxCarrera.getSelectedItem().toString());
-									((EmpUniversitario) solicitud).setAgnos(Integer.valueOf(spnAgnos.getValue().toString()));
+									((EmpUniversitario) solicitud).setAngos(Short.valueOf(spnAgnos.getValue().toString()));
 
 								}
 								else if (solicitud instanceof EmpTecnico)
 								{
 									((EmpTecnico) solicitud).setArea(cbxArea.getSelectedItem().toString());
-									((EmpTecnico) solicitud).setAgnos(Integer.valueOf(spnAgnos.getValue().toString()));
+									((EmpTecnico) solicitud).setAngos(Short.valueOf(spnAgnos.getValue().toString()));
 								}
 								JOptionPane.showMessageDialog(null, "Modificacion Realizada", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
@@ -727,9 +727,9 @@ public class SolEmpresa extends JDialog
 
 			spnAgnos.setValue(new Integer("0"));
 			if (solicitud instanceof EmpUniversitario)
-				spnAgnos.setValue(((EmpUniversitario) solicitud).getAgnos());
+				spnAgnos.setValue(((EmpUniversitario) solicitud).getAngos());
 			else if (solicitud instanceof EmpTecnico)
-				spnAgnos.setValue(((EmpTecnico) solicitud).getAgnos());
+				spnAgnos.setValue(((EmpTecnico) solicitud).getAngos());
 
 			//txtIdiomas.setText(solicitud.getIdiomas());
 			ModelActividades.removeAllElements();
@@ -772,7 +772,7 @@ public class SolEmpresa extends JDialog
 
 		if (rdbtnUniversitario.isSelected() && (((txtRNC.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0) && (cbxIdiomas.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0) && (cbxCarrera.getSelectedIndex() > 0)
+				&& (cbxContrato.getSelectedIndex() > 0) && (cbxIdiomas.getSelectedIndex() > 0) && (cbxCarrera.getSelectedIndex() > 0)
 				&& (cbxCiudad.getSelectedIndex() > 0))))
 			validado = true;
 		else if (rdbtnTecnico.isSelected() && (((txtRNC.getText().length() > 1) && (txtNombre.getText().length() > 1)
@@ -789,13 +789,12 @@ public class SolEmpresa extends JDialog
 		ResultSet rs = null;
 
 		try {
-			// Obtener la conexión con la base de datos usando tu función para abrir la conexión
 			conn = Bolsa.abrirConexion();
 
 			stmt = conn.createStatement();
 
-			// Ejecutar la consulta SQL para obtener las ciudades desde la tabla correspondiente
-			String sql = "select id_ciudad, nombre_ciudad from Ciudad"; // Reemplaza "tabla_ciudades" por el nombre de tu tabla
+			
+			String sql = "select id_ciudad, nombre_ciudad from Ciudad"; 
 			rs = stmt.executeQuery(sql);
 
 			// Recopilar los nombres de las ciudades en el ArrayList

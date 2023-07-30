@@ -188,7 +188,7 @@ public class SolPersona extends JDialog
 						}
 						catch (SQLException e2)
 						{
-							// TODO: handle exception
+							System.err.println("Error");
 						}
 					}
 					else
@@ -768,8 +768,7 @@ public class SolPersona extends JDialog
 
 		if (rdbtnUniversitario.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)
-				&& (cbxContrato.getSelectedIndex() > 0)) && (cbxIdioma.getSelectedIndex() > 0) && (cbxArea.getSelectedIndex() > 0)
-				&& (cbxCarrera.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0)))
+				&& (cbxContrato.getSelectedIndex() > 0)) && (cbxIdioma.getSelectedIndex() > 0) && (cbxCarrera.getSelectedIndex() > 0) && (cbxCiudad.getSelectedIndex() > 0)))
 			validado = true;
 		else if (rdbtnTecnico.isSelected() && (((txtCedula.getText().length() > 1) && (txtNombre.getText().length() > 1)
 				&& (txtTelefono.getText().length() > 1) && (txtDireccion.getText().length() > 1)

@@ -207,9 +207,9 @@ public class MostrarSolicitud extends JDialog
 			if (solicitud instanceof SoliEmpresa)
 			{
 				if (solicitud instanceof EmpUniversitario)
-					txtAgnos.setText(String.valueOf(((EmpUniversitario) solicitud).getAgnos()));
+					txtAgnos.setText(String.valueOf(((EmpUniversitario) solicitud).getAngos()));
 				else if (solicitud instanceof EmpTecnico)
-					txtAgnos.setText(String.valueOf(((EmpTecnico) solicitud).getAgnos()));
+					txtAgnos.setText(String.valueOf(((EmpTecnico) solicitud).getAngos()));
 			}
 			else if (solicitud instanceof SoliPersona)
 			{
@@ -224,8 +224,6 @@ public class MostrarSolicitud extends JDialog
 			txtTipoSueldo.setBounds(316, 173, 126, 20);
 			panelDatos.add(txtTipoSueldo);
 			txtTipoSueldo.setColumns(10);
-			if (solicitud instanceof SoliEmpresa)
-				txtTipoSueldo.setText(((SoliEmpresa) solicitud).getTipoSalario());
 
 			txtContrato = new JTextField();
 			txtContrato.setEditable(false);

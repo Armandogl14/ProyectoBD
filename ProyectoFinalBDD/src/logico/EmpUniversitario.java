@@ -6,15 +6,13 @@ import java.util.ArrayList;
 public class EmpUniversitario extends SoliEmpresa
 {
 	private String carrera;
-	private int agnos;
 
 	public EmpUniversitario(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad,
-			String rnc, float porcentajeMacth, String tipoSalario, float sueldo, String idioma, 
-			String carrera, int agnos)
+			String rnc, float porcentajeMacth, float sueldo, String idioma, 
+			String carrera, short angos)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario, carrera, carrera, agnos, carrera);
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, angos);
 		this.carrera = carrera;
-		this.agnos = agnos;
 	}
 
 	public String getCarrera()
@@ -25,15 +23,5 @@ public class EmpUniversitario extends SoliEmpresa
 	public void setCarrera(String carrera)
 	{
 		this.carrera = carrera;
-	}
-
-	public int getAgnos()
-	{
-		return agnos;
-	}
-
-	public void setAgnos(int agnos)
-	{
-		this.agnos = agnos;
 	}
 }

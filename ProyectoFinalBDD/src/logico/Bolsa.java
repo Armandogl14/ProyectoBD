@@ -144,18 +144,18 @@ public class Bolsa implements Serializable
 
 	// M茅todo para abrir la conexi贸n
 	public static Connection abrirConexion() {
-		 Connection connection = null;
-	    try {
-	        // Cargar el controlador JDBC
-	        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	        
-	        // Establecer la conexi贸n
-	        connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	    } catch (ClassNotFoundException | SQLException e) {
-	        System.err.println("Error al conectar con SQL Server: " + e.getMessage());
-	    }
-	    
-	    return connection;
+		Connection connection = null;
+		try {
+			// Cargar el controlador JDBC
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+
+			// Establecer la conexi贸n
+			connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+		} catch (ClassNotFoundException | SQLException e) {
+			System.err.println("Error al conectar con SQL Server: " + e.getMessage());
+		}
+
+		return connection;
 	}
 
 	// M茅todo para cerrar la conexi贸n
@@ -185,31 +185,31 @@ public class Bolsa implements Serializable
 			i++;
 		}
 		return aux;*/
-		 Empresa aux = null;
+		Empresa aux = null;
 
-		    String selectQuery = "select RNC,Nombre,Telefono,Direccion from Empresa";
-		    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-		         Statement statement = connection1.createStatement();
-		         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+		String selectQuery = "select RNC,Nombre,Telefono,Direccion from Empresa";
+		try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-		        // Recorrer el resultado del conjunto de resultados (ResultSet)
-		        while (resultSet.next()) {
-		            String comparador = resultSet.getString("RNC");
-		            if (comparador.equalsIgnoreCase(rnc)) {
-		                aux = new Empresa(null, null, null, null) {};
-		                aux.setNombre(resultSet.getString("Nombre"));
-		                aux.setRnc(resultSet.getString("RNC"));
-		                aux.setDireccion(resultSet.getString("Direccion"));
-		                aux.setTelefono(resultSet.getString("Telefono"));
-		            }
-		        }
-		    } catch (SQLException e) {
-		        e.printStackTrace();
-		    }
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				String comparador = resultSet.getString("RNC");
+				if (comparador.equalsIgnoreCase(rnc)) {
+					aux = new Empresa(null, null, null, null) {};
+					aux.setNombre(resultSet.getString("Nombre"));
+					aux.setRnc(resultSet.getString("RNC"));
+					aux.setDireccion(resultSet.getString("Direccion"));
+					aux.setTelefono(resultSet.getString("Telefono"));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-		    return aux;
+		return aux;
 	}
-//=======================================================================================================
+	//=======================================================================================================
 	/*public Persona buscarPersonaByCedula(String cedula)
 	{
 		boolean encontrado = false;
@@ -235,7 +235,7 @@ public class Bolsa implements Serializable
                     	aux.setContratado(false);
                     }
             	}
-            	
+
             }
 
         } catch (SQLException e) {
@@ -245,76 +245,87 @@ public class Bolsa implements Serializable
 		return aux;
 	}*/
 	public Persona buscarPersonaByCedula(String cedula) {
-	    Persona aux = null;
+		Persona aux = null;
 
-	    String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from Persona";
-	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	         Statement statement = connection1.createStatement();
-	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado, Nivel_Educativo from Persona";
+		try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-	        // Recorrer el resultado del conjunto de resultados (ResultSet)
-	        while (resultSet.next()) {
-	            String comparador = resultSet.getString("Cedula");
-	            if (comparador.equalsIgnoreCase(cedula)) {
-	                aux = new Persona(null, null, null, null) {};
-	                aux.setNombre(resultSet.getString("Nombre"));
-	                aux.setId(resultSet.getString("Cedula"));
-	                aux.setDireccion(resultSet.getString("Direccion"));
-	                aux.setTelefono(resultSet.getString("Telefono"));
-	                String contratado = resultSet.getString("Contratado");
-	                if(contratado.equalsIgnoreCase("Si")) {
-	                	 aux.setContratado(true);
-	                }else {
-	                	aux.setContratado(false);
-	                }
-	               
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				String comparador = resultSet.getString("Cedula");
+				if (comparador.equalsIgnoreCase(cedula)) {
+					
+					aux = new Persona(null, null, null, null);
+					aux.setNombre(resultSet.getString("Nombre"));
+					aux.setId(resultSet.getString("Cedula"));
+					aux.setDireccion(resultSet.getString("Direccion"));
+					aux.setTelefono(resultSet.getString("Telefono"));
+					String contratado = resultSet.getString("Contratado");
+					if(contratado.equalsIgnoreCase("Si")) {
+						aux.setContratado(true);
+					}else {
+						aux.setContratado(false);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return aux;
+		return aux;
 	}
-	public Solicitud buscarOfertaByCodigo(int codigo) {
-	    SoliEmpresa aux = new SoliEmpresa(null, false, null, false, null, (float) 0.00, null, null, 0.0f, null,null,null,0, null);
-	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad,Porcentaje_Match from Oferta_Empresa";
-	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	         Statement statement = connection1.createStatement();
-	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+	public SoliEmpresa buscarOfertaByCodigo(int codigo) {
+		SoliEmpresa aux = null;
+		String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad, Anios_Experiencia, Porcentaje_Match from Oferta_Empresa";
+		try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-	        // Recorrer el resultado del conjunto de resultados (ResultSet)
-	        while (resultSet.next()) {
-	            int comparador = resultSet.getInt("Codigo");
-	            if (comparador == codigo) {
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				int comparador = resultSet.getInt("Codigo");
+				if (comparador == codigo) {
 
-	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
-	                String movilidad = resultSet.getString("Mobilidad");
-	                if (movilidad.equalsIgnoreCase("Si")) {
-	                    aux.setMovilidad(true);
-	                } else {
-	                    aux.setMovilidad(false);
-	                }
-	                aux.setContrato(resultSet.getString("Contrato"));
-	                String licencia = resultSet.getString("Licencia");
-	                if (licencia.equalsIgnoreCase("Si")) {
-	                    aux.setLicencia(true);
-	                } else {
-	                    aux.setLicencia(false);
-	                }
-	                aux.setCuidad(resultSet.getString("id_ciudad"));
-	                aux.setSueldo(resultSet.getFloat("Sueldo"));
-	                aux.setIdiomas(resultSet.getString("id_idioma"));
-	                aux.setRnc(resultSet.getString("RNC"));
-	                aux.setPorcentajeMacth(resultSet.getFloat("Porcentaje_Match"));
-	                //aux.setTipoSalario(tipoSalario);
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+					if(resultSet.getString("Nivel_Educativo_Deseado").equalsIgnoreCase("Universitario"))
+					{
+						aux = new EmpUniversitario(null, false, null, false, null, null, 0, 0, null, null, (short) 0);
+						((EmpUniversitario) aux).setCarrera(resultSet.getString("Carrera"));
+					}
 
-	    return aux;
+					else if(resultSet.getString("Nivel_Educativo_Deseado").equalsIgnoreCase("Tecnico"))
+					{
+						aux = new EmpTecnico(null, false, null, false, null, null, 0, 0, null, null, (short) 0);
+						((EmpTecnico) aux).setArea(resultSet.getString("Area"));
+					}
+
+					aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+					String movilidad = resultSet.getString("Mobilidad");
+					if (movilidad.equalsIgnoreCase("Si")) {
+						aux.setMovilidad(true);
+					} else {
+						aux.setMovilidad(false);
+					}
+					aux.setContrato(resultSet.getString("Contrato"));
+					String licencia = resultSet.getString("Licencia");
+					if (licencia.equalsIgnoreCase("Si")) {
+						aux.setLicencia(true);
+					} else {
+						aux.setLicencia(false);
+					}
+					aux.setCuidad(resultSet.getString("id_ciudad"));
+					aux.setSueldo(resultSet.getFloat("Sueldo"));
+					aux.setIdiomas(resultSet.getString("id_idioma"));
+					aux.setRnc(resultSet.getString("RNC"));
+					aux.setPorcentajeMacth(resultSet.getFloat("Porcentaje_Match"));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return aux;
 	}
 	/*public Solicitud buscarSolicitudByCodigo(int codigo) {
 		SoliPersona aux = new SoliPersona(null, true, null, true, null, (float) 0.00, null, null, null, null, 0);
@@ -358,55 +369,57 @@ public class Bolsa implements Serializable
 
 	    return aux;
 	}*/
-	public Solicitud buscarSolicitudByCodigo(int codigo) {
-	    SoliPersona aux = new SoliPersona(null, false, null, false, null, (float) 0.00, null, null, null, null, 0);
-	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";
-	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-	         Statement statement = connection1.createStatement();
-	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+	public SoliPersona buscarSolicitudByCodigo(int codigo) {
+		SoliPersona aux = new SoliPersona(null, false, null, false, null, (float) 0.00, null, null, null, null, null , (short) 0);
+		String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";
+		try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-	        // Recorrer el resultado del conjunto de resultados (ResultSet)
-	        while (resultSet.next()) {
-	            int comparador = resultSet.getInt("Codigo");
-	            if (comparador == codigo) {
-	                // C骴igo de solicitud encontrado en la tabla
-	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
-	                String movilidad = resultSet.getString("Mobilidad");
-	                aux.setMovilidad(movilidad.equalsIgnoreCase("Si"));
-	                aux.setContrato(resultSet.getString("Contrato"));
-	                String licencia = resultSet.getString("Licencia");
-	                aux.setLicencia(licencia.equalsIgnoreCase("Si"));
-	                aux.setCuidad(resultSet.getString("id_ciudad"));
-	                aux.setSueldo(resultSet.getFloat("Sueldo"));
-	                aux.setIdiomas(resultSet.getString("id_idioma"));
-	                aux.setCedula(resultSet.getString("Cedula"));
-	                aux.setAniosExp(resultSet.getInt("Agnos_Experiencia"));
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				int comparador = resultSet.getInt("Codigo");
+				if (comparador == codigo) {
+					// C骴igo de solicitud encontrado en la tabla
+					aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+					String movilidad = resultSet.getString("Mobilidad");
+					if (movilidad.equalsIgnoreCase("Si")) {
+						aux.setMovilidad(true);
+					} else {
+						aux.setMovilidad(false);
+					}
+					aux.setContrato(resultSet.getString("Contrato"));
+					String licencia = resultSet.getString("Licencia");
+					if (licencia.equalsIgnoreCase("Si")) {
+						aux.setLicencia(true);
+					} else {
+						aux.setLicencia(false);
+					}
+					aux.setLicencia(licencia.equalsIgnoreCase("Si"));
+					aux.setCuidad(resultSet.getString("id_ciudad"));
+					aux.setSueldo(resultSet.getFloat("Sueldo"));
+					aux.setIdiomas(resultSet.getString("id_idioma"));
+					aux.setCedula(resultSet.getString("Cedula"));
+					aux.setAniosExp(resultSet.getShort("Agnos_Experiencia"));
+					aux.setNivel_educativo(resultSet.getString("Nivel_Educativo"));
+					aux.setCarrera(resultSet.getString("id_carrera"));
+					aux.setArea(resultSet.getString("id_area"));
 
-	                // Manejar el valor nulo en la columna "id_carrera" con try-catch
-	                try {
-	                    String idCarrera = resultSet.getString("id_carrera");
-	                    aux.setCarrera(idCarrera);
-	                } catch (SQLException e) {
-	                    // Si la columna "id_carrera" es nula, asignar un valor predeterminado o hacer lo que sea necesario
-	                    aux.setCarrera("Carrera no especificada");
-	                }
+					// No necesitas continuar el bucle si ya encontraste la solicitud
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	                aux.setNivel_educativo(resultSet.getString("Nivel_Educativo"));
-	                // No necesitas continuar el bucle si ya encontraste la solicitud
-	                break;
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-
-	    return aux;
+		return aux;
 	}
 	/*public Solicitud buscarOfertaByCodigo(int codigo)
 	{
 		boolean encontrado = false;
 		int i = 0;
-		
+
 		SoliEmpresa aux = new SoliEmpresa(null, false, null, false, null, (float) 0.00, null, null, 0.0f, null);
 	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad,Porcentaje_Match from Oferta_Empresa";
 	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -417,7 +430,7 @@ public class Bolsa implements Serializable
 	        while (resultSet.next()) {
 	            int comparador = resultSet.getInt("Codigo");
 	            if (comparador == codigo) {
-	
+
 	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
 	                String movilidad = resultSet.getString("Mobilidad");
 	                if(movilidad.equalsIgnoreCase("Si")) {
@@ -526,12 +539,12 @@ public class Bolsa implements Serializable
 		boolean login = false;
 		Connection conexion = abrirConexion();
 		String select = "select username, cotrasenia from Usuario";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("username").equalsIgnoreCase(username) && result.getString("contrasenia").equalsIgnoreCase(password))
 					login = true;
@@ -541,7 +554,7 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return login;
 	}
 
@@ -558,11 +571,11 @@ public class Bolsa implements Serializable
 			puntaje += compararMovilidad(solicitudEmpresa.isMovilidad(), solicitudPersona.isMovilidad());
 			puntaje += compararLicencia(solicitudEmpresa.isLicencia(), solicitudPersona.isLicencia());
 			puntaje += compararCiudad(solicitudEmpresa.getCuidad(), solicitudPersona.getCuidad());
-			if (solicitudEmpresa instanceof EmpUniversitario && persona instanceof Universitario)
-				puntaje += compararTiempo(((EmpUniversitario) solicitudEmpresa).getAgnos(),
-						((Universitario) persona).getAgnos());
-			else if (solicitudEmpresa instanceof EmpTecnico && persona instanceof Tecnico)
-				puntaje += compararTiempo(((EmpTecnico) solicitudEmpresa).getAgnos(), ((Tecnico) persona).getAgnos());
+			if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
+				puntaje += compararTiempo(((EmpUniversitario) solicitudEmpresa).getAngos(),
+						solicitudPersona.getAniosExp());
+			else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
+				puntaje += compararTiempo(((EmpTecnico) solicitudEmpresa).getAngos(), solicitudPersona.getAniosExp());
 		}
 		return puntaje;
 	}
@@ -621,10 +634,10 @@ public class Bolsa implements Serializable
 	{
 		float porcentaje = 0;
 		float total = 10;
-		
+
 		if(idiomaHablado.equalsIgnoreCase(idiomaRequerido))
 			return total;
-		
+
 		else
 			return porcentaje;
 	}
@@ -681,7 +694,7 @@ public class Bolsa implements Serializable
 		return total;
 	}
 
-	public float compararTiempo(int tiempoRequerido, int tiempoQueTiene)
+	public float compararTiempo(short tiempoRequerido, short tiempoQueTiene)
 	{
 		float porcentaje = 0;
 		float total = 18;
@@ -742,18 +755,18 @@ public class Bolsa implements Serializable
 				person.setContratado(true);
 	}
 
-	
+
 	public boolean existeUsuario(String username)
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
 		String select = "select username from Usuario";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("username").equalsIgnoreCase(username))
 					existe = true;
@@ -763,21 +776,21 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return existe;
 	}
-	
+
 	public boolean existePersona(String Cedula)
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
 		String select = "select Cedula from Persona";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("Cedula").equalsIgnoreCase(Cedula))
 					existe = true;
@@ -787,21 +800,21 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return existe;
 	}
-	
+
 	public boolean existeEmpresa(String RNC)
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
 		String select = "select RNC from Espresa";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("RNC").equalsIgnoreCase(RNC))
 					existe = true;
@@ -811,21 +824,21 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return existe;
 	}
-	
+
 	public boolean existeSoliPersona(String code)
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
 		String select = "select Codigo from Solicitud_Persona";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("Codigo").equalsIgnoreCase(code))
 					existe = true;
@@ -835,21 +848,21 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return existe;
 	}
-	
+
 	public boolean existeOfertaEmpresa(String code)
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
 		String select = "select Codigo from Oferta_Empresa";
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			while(result.next()) {
 				if(result.getString("Codigo").equalsIgnoreCase(code))
 					existe = true;
@@ -859,21 +872,21 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return existe;
 	}
-	
+
 	public boolean isContratado(String Cedula)
 	{
 		boolean contratado = false;
 		Connection conexion = abrirConexion();
 		String select = "select Cedula, Contratado from Persona where Cedula = "+Cedula;
-		
+
 		try
 		{
 			Statement stmnt = conexion.createStatement();
 			ResultSet result = stmnt.executeQuery(select);
-			
+
 			if(result.getString("Contratado").equalsIgnoreCase("Si"))
 				contratado = true;
 		}
@@ -881,7 +894,29 @@ public class Bolsa implements Serializable
 		{
 			e.printStackTrace();
 		}
-		
+
 		return contratado;
+	}
+
+	public boolean isSolicitudActiva(int Code)
+	{
+		boolean Activa = false;
+		Connection conexion = abrirConexion();
+		String select = "select Codigo, Activa from Solicitud_Persona where Codigo = "+Code;
+
+		try
+		{
+			Statement stmnt = conexion.createStatement();
+			ResultSet result = stmnt.executeQuery(select);
+
+			if(result.getString("Activa").equalsIgnoreCase("Si"))
+				Activa = true;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return Activa;
 	}
 }

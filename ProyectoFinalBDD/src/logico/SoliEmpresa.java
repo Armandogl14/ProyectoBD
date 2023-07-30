@@ -7,25 +7,16 @@ public class SoliEmpresa extends Solicitud
 {
 	protected String rnc;
 	protected float porcentajeMacth;
-	protected String tipoSalario;
-	protected String NivelEducativo;
-	protected String Area;
-	protected int anios;
-	protected String Carrera;
+	protected short angos;
 
 
 	public SoliEmpresa(String codigo, boolean movilidad, String contrato, boolean licencia, String cuidad, float sueldo,
-			String idioma, String rnc, float porcentajeMacth, String tipoSalario,String NivelEducativo,String Area,int anios,String Carrera)
+			String idioma, String rnc, float porcentajeMacth,short angos)
 	{
 		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma);
 		this.rnc = rnc;
 		this.porcentajeMacth = porcentajeMacth;
-		this.tipoSalario = tipoSalario;
-		this.NivelEducativo = NivelEducativo;
-		this.Area = Area;
-		this.anios = anios;
-		this.Carrera = Carrera;
-		
+		this.angos = angos;
 	}
 
 	public String getRnc()
@@ -38,14 +29,6 @@ public class SoliEmpresa extends Solicitud
 		this.rnc = rnc;
 	}
 
-	public String getNivelEducativo() {
-		return NivelEducativo;
-	}
-
-	public void setNivelEducativo(String nivelEducativo) {
-		NivelEducativo = nivelEducativo;
-	}
-
 	public float getPorcentajeMacth()
 	{
 		return porcentajeMacth;
@@ -56,17 +39,6 @@ public class SoliEmpresa extends Solicitud
 		this.porcentajeMacth = porcentajeMacth;
 	}
 
-	public String getTipoSalario()
-	{
-		return tipoSalario;
-	}
-
-	public void setTipoSalario(String tipoSalario)
-	{
-		this.tipoSalario = tipoSalario;
-	}
-
-	
 	@Override
 	public boolean checkEstado()
 	{
@@ -74,12 +46,13 @@ public class SoliEmpresa extends Solicitud
 		return false;
 	}
 
-	public String getArea() {
-		return Area;
+	public short getAngos()
+	{
+		return angos;
 	}
 
-	public void setArea(String area) {
-		Area = area;
+	public void setAngos(short angos)
+	{
+		this.angos = angos;
 	}
-
 }
