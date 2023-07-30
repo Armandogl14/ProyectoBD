@@ -90,8 +90,8 @@ public class ListSolicitudes extends JDialog
 								btnMostrar.setEnabled(true);
 								btnSelecionar.setEnabled(true);
 								btnModificar.setEnabled(true);
-								selected = Bolsa.getInstance()
-										.buscarSolicitudByCodigo(table.getValueAt(rowSelected, 0).toString());
+								selected = Bolsa.getInstance().buscarSolicitudByCodigo(Integer.parseInt(table.getValueAt(rowSelected, 0).toString()));
+
 							}
 						}
 					});

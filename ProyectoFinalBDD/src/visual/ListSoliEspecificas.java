@@ -98,7 +98,7 @@ public class ListSoliEspecificas extends JDialog
 								btnEliminar.setEnabled(true);
 								btnMostrar.setEnabled(true);
 								selected = Bolsa.getInstance()
-										.buscarSolicitudByCodigo(table.getValueAt(rowSelected, 0).toString());
+										.buscarOfertaByCodigo(Integer.getInteger(table.getValueAt(rowSelected, 0).toString()));
 							}
 						}
 					});

@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -127,16 +131,61 @@ public class ModPersona extends JDialog
 					public void actionPerformed(ActionEvent e)
 					{
 						String antiguo = person.getId();
-						person.setId(txtCedula.getText());
-						person.setNombre(txtNom.getText());
-						person.setTelefono(txtTelf.getText());
-						person.setDireccion(txtDir.getText());
+						//person.setId(txtCedula.getText());
+						//person.setNombre(txtNom.getText());
+						//person.setTelefono(txtTelf.getText());
+						//person.setDireccion(txtDir.getText());
+						 Connection conn = null;
+						 PreparedStatement pstmt = null;
+						 try {
+					            // Establecer la conexión con la base de datos (reemplaza los valores adecuadamente)
+					            conn = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(),Bolsa.getPassword());
+
+					            // Consulta SQL para actualizar varios atributos de la persona por su ID
+					            String sql = "UPDATE Persona SET Cedula = ?, Nombre = ?, direccion = ? , Telefono = ?, Contratado = ? WHERE  Cedula = ?";
+					            pstmt = conn.prepareStatement(sql);
+
+					            // Asignar los valores a los parámetros de la consulta
+					            pstmt.setString(6,txtCedula.getText() );
+					            pstmt.setString(1,txtCedula.getText() );
+					            pstmt.setString(2, txtNom.getText());
+					            pstmt.setString(3, txtDir.getText());
+					            pstmt.setString(4, txtTelf.getText());
+					            if(rdbtnSi.isSelected())
+								{
+					            	pstmt.setString(5, "Si");
+
+								}
+								else
+								{
+									pstmt.setString(5, "No");
+								}
+					            
+					            // Ejecutar la consulta de actualización
+					            int filasActualizadas = pstmt.executeUpdate();
+
+					            if (filasActualizadas > 0) {
+					                System.out.println("La persona con ID  ha sido actualizada correctamente.");
+					            } else {
+					                System.out.println("No se encontró ninguna persona con ID . No se realizó ninguna actualización.");
+					            }
+					        } catch (SQLException e1) {
+					            e1.printStackTrace();
+					        } finally {
+					            // Cerrar recursos (prepared statement y conexión)
+					            try {
+					                if (pstmt != null) pstmt.close();
+					                if (conn != null) conn.close();
+					            } catch (SQLException e1) {
+					                e1.printStackTrace();
+					            }
+					        }
 						JOptionPane.showMessageDialog(null, "Persona Modificada", "Informacion",
 								JOptionPane.INFORMATION_MESSAGE);
 						ListPersonas.loadPersons();
-						Bolsa.getInstance().cambiarCedula(antiguo, txtCedula.getText());
+						//Bolsa.getInstance().cambiarCedula(antiguo, txtCedula.getText());
 						
-						if(rdbtnSi.isSelected())
+						/*if(rdbtnSi.isSelected())
 						{
 							Bolsa.getInstance().desactivarSoliPersona(person.getId());
 							Bolsa.getInstance().contrarPersona(person.getId());
@@ -146,7 +195,8 @@ public class ModPersona extends JDialog
 						{
 							Bolsa.getInstance().reactivarSoliPersona(person.getId());
 							Bolsa.getInstance().desemplearPersona(person.getId());
-						}
+						}*/
+						
 					}
 				});
 				btnMod.setActionCommand("OK");

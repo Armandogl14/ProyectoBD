@@ -90,8 +90,10 @@ public class List_oferta extends JDialog
 								btnMostrar.setEnabled(true);
 								btnSelecionar.setEnabled(true);
 								btnModificar.setEnabled(true);
-								selected = Bolsa.getInstance()
-										.buscarSolicitudByCodigo(table.getValueAt(rowSelected, 0).toString());
+								//selected = Bolsa.getInstance()
+								//		.buscarOfertaByCodigo(Integer.getInteger(table.getValueAt(rowSelected, 0).toString()));
+								selected = Bolsa.getInstance().buscarOfertaByCodigo(Integer.parseInt(table.getValueAt(rowSelected, 0).toString()));
+
 							}
 						}
 					});
@@ -138,19 +140,11 @@ public class List_oferta extends JDialog
 					{
 						public void actionPerformed(ActionEvent e)
 						{
-							if (selected instanceof SoliEmpresa)
-							{
+							
 								SolEmpresa solEmp = new SolEmpresa((SoliEmpresa) selected);
 								solEmp.setModal(true);
 								solEmp.setVisible(true);
-							}
-							else if (selected instanceof SoliPersona)
-							{
-								SolPersona solPer = new SolPersona((SoliPersona) selected);
-								solPer.setModal(true);
-								solPer.setVisible(true);
-							}
-
+							
 						}
 					});
 					btnModificar.setEnabled(false);

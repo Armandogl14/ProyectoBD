@@ -88,9 +88,9 @@ public class SolEmpresa extends JDialog
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public SolEmpresa(SoliEmpresa aux)
+	public SolEmpresa(SoliEmpresa aux1)
 	{
-		solicitud = aux;
+		SoliEmpresa  aux = aux1;
 		setResizable(false);
 		setTitle("Registrar Solicitud de Empresa");
 		if (solicitud != null) // mod

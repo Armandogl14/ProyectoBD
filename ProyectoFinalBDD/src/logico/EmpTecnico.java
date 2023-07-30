@@ -12,7 +12,7 @@ public class EmpTecnico extends SoliEmpresa
 			float porcentajeMacth, String tipoSalario, float sueldo, String idioma, String area,
 			int agnos)
 	{
-		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario);
+		super(codigo, movilidad, contrato, licencia, cuidad, sueldo, idioma, rnc, porcentajeMacth, tipoSalario, area, area, agnos, area);
 		this.area = area;
 		this.agnos = agnos;
 	}

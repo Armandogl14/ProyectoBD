@@ -171,7 +171,7 @@ public class Bolsa implements Serializable
 	}*/
 	public Empresa buscarEmpresaByRNC(String rnc)
 	{
-		boolean encontrado = false;
+		/*boolean encontrado = false;
 		int i = 0;
 		Empresa aux = null;
 
@@ -184,28 +184,56 @@ public class Bolsa implements Serializable
 			}
 			i++;
 		}
-		return aux;
+		return aux;*/
+		 Empresa aux = null;
+
+		    String selectQuery = "select RNC,Nombre,Telefono,Direccion from Empresa";
+		    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+		         Statement statement = connection1.createStatement();
+		         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+		        // Recorrer el resultado del conjunto de resultados (ResultSet)
+		        while (resultSet.next()) {
+		            String comparador = resultSet.getString("RNC");
+		            if (comparador.equalsIgnoreCase(rnc)) {
+		                aux = new Empresa(null, null, null, null) {};
+		                aux.setNombre(resultSet.getString("Nombre"));
+		                aux.setRnc(resultSet.getString("RNC"));
+		                aux.setDireccion(resultSet.getString("Direccion"));
+		                aux.setTelefono(resultSet.getString("Telefono"));
+		            }
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+
+		    return aux;
 	}
 //=======================================================================================================
-	public Persona buscarPersonaByCedula(String cedula)
+	/*public Persona buscarPersonaByCedula(String cedula)
 	{
 		boolean encontrado = false;
 		int i = 0;
 		Persona aux = null;
 
-		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from CIUDAD";
+		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from Persona";
         try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              Statement statement = connection1.createStatement();
              ResultSet resultSet = statement.executeQuery(selectQuery)) {
-
             // Recorrer el resultado del conjunto de resultados (ResultSet)
             while (resultSet.next()) {
                String compardor = resultSet.getString(resultSet.getString("Cedula"));
             	if(compardor.equalsIgnoreCase(cedula)) {
             		aux.setNombre(resultSet.getString("Nombre"));
-                    aux.setId(resultSet.getString("cedula"));
+                    aux.setId(resultSet.getString("Cedula"));
                     aux.setDireccion(resultSet.getString("Direccion"));
                     aux.setTelefono(resultSet.getString("Telefono"));
+                    String contratado = resultSet.getString("Contratado");
+                    if(contratado.equalsIgnoreCase("Si")) {
+                    	aux.setContratado(true);
+                    }else {
+                    	aux.setContratado(false);
+                    }
             	}
             	
             }
@@ -215,30 +243,209 @@ public class Bolsa implements Serializable
 			e.printStackTrace();
 		} 
 		return aux;
-	}
+	}*/
+	public Persona buscarPersonaByCedula(String cedula) {
+	    Persona aux = null;
 
-	public Solicitud buscarSolicitudByCodigo(String codigo)
+	    String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado from Persona";
+	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+	         Statement statement = connection1.createStatement();
+	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+	        // Recorrer el resultado del conjunto de resultados (ResultSet)
+	        while (resultSet.next()) {
+	            String comparador = resultSet.getString("Cedula");
+	            if (comparador.equalsIgnoreCase(cedula)) {
+	                aux = new Persona(null, null, null, null) {};
+	                aux.setNombre(resultSet.getString("Nombre"));
+	                aux.setId(resultSet.getString("Cedula"));
+	                aux.setDireccion(resultSet.getString("Direccion"));
+	                aux.setTelefono(resultSet.getString("Telefono"));
+	                String contratado = resultSet.getString("Contratado");
+	                if(contratado.equalsIgnoreCase("Si")) {
+	                	 aux.setContratado(true);
+	                }else {
+	                	aux.setContratado(false);
+	                }
+	               
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return aux;
+	}
+	public Solicitud buscarOfertaByCodigo(int codigo) {
+	    SoliEmpresa aux = new SoliEmpresa(null, false, null, false, null, (float) 0.00, null, null, 0.0f, null,null,null,0, null);
+	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad,Porcentaje_Match from Oferta_Empresa";
+	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+	         Statement statement = connection1.createStatement();
+	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+	        // Recorrer el resultado del conjunto de resultados (ResultSet)
+	        while (resultSet.next()) {
+	            int comparador = resultSet.getInt("Codigo");
+	            if (comparador == codigo) {
+
+	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+	                String movilidad = resultSet.getString("Mobilidad");
+	                if (movilidad.equalsIgnoreCase("Si")) {
+	                    aux.setMovilidad(true);
+	                } else {
+	                    aux.setMovilidad(false);
+	                }
+	                aux.setContrato(resultSet.getString("Contrato"));
+	                String licencia = resultSet.getString("Licencia");
+	                if (licencia.equalsIgnoreCase("Si")) {
+	                    aux.setLicencia(true);
+	                } else {
+	                    aux.setLicencia(false);
+	                }
+	                aux.setCuidad(resultSet.getString("id_ciudad"));
+	                aux.setSueldo(resultSet.getFloat("Sueldo"));
+	                aux.setIdiomas(resultSet.getString("id_idioma"));
+	                aux.setRnc(resultSet.getString("RNC"));
+	                aux.setPorcentajeMacth(resultSet.getFloat("Porcentaje_Match"));
+	                //aux.setTipoSalario(tipoSalario);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return aux;
+	}
+	/*public Solicitud buscarSolicitudByCodigo(int codigo) {
+		SoliPersona aux = new SoliPersona(null, true, null, true, null, (float) 0.00, null, null, null, null, 0);
+	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";
+	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+	         Statement statement = connection1.createStatement();
+	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+	        // Recorrer el resultado del conjunto de resultados (ResultSet)
+	        while (resultSet.next()) {
+	            int comparador = resultSet.getInt("Codigo");
+	            if (comparador == codigo) {
+
+	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+	                String movilidad = resultSet.getString("Mobilidad");
+	                if (movilidad.equalsIgnoreCase("Si")) {
+	                    aux.setMovilidad(true);
+	                } else {
+	                    aux.setMovilidad(false);
+	                }
+	                aux.setContrato(resultSet.getString("Contrato"));
+	                String licencia = resultSet.getString("Licencia");
+	                if (licencia.equalsIgnoreCase("Si")) {
+	                    aux.setLicencia(true);
+	                } else {
+	                    aux.setLicencia(false);
+	                }
+	                aux.setCuidad(resultSet.getString("id_ciudad"));
+	                aux.setSueldo(resultSet.getFloat("Sueldo"));
+	                aux.setIdiomas(resultSet.getString("id_idioma"));
+	                aux.setCedula(resultSet.getString("Cedula"));
+	                aux.setAniosExp(resultSet.getInt("Agnos_Experiencia"));
+	                aux.setCarrera(resultSet.getString("id_carrera"));
+	                aux.setNivel_educativo(resultSet.getString("Nivel_Educativo"));
+	                //aux.setTipoSalario(tipoSalario);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return aux;
+	}*/
+	public Solicitud buscarSolicitudByCodigo(int codigo) {
+	    SoliPersona aux = new SoliPersona(null, false, null, false, null, (float) 0.00, null, null, null, null, 0);
+	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo,Sueldo,Activa,Cedula,id_carrera,id_area,id_idioma,id_ciudad,Agnos_Experiencia from Solicitud_Persona";
+	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+	         Statement statement = connection1.createStatement();
+	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
+
+	        // Recorrer el resultado del conjunto de resultados (ResultSet)
+	        while (resultSet.next()) {
+	            int comparador = resultSet.getInt("Codigo");
+	            if (comparador == codigo) {
+	                // Código de solicitud encontrado en la tabla
+	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+	                String movilidad = resultSet.getString("Mobilidad");
+	                aux.setMovilidad(movilidad.equalsIgnoreCase("Si"));
+	                aux.setContrato(resultSet.getString("Contrato"));
+	                String licencia = resultSet.getString("Licencia");
+	                aux.setLicencia(licencia.equalsIgnoreCase("Si"));
+	                aux.setCuidad(resultSet.getString("id_ciudad"));
+	                aux.setSueldo(resultSet.getFloat("Sueldo"));
+	                aux.setIdiomas(resultSet.getString("id_idioma"));
+	                aux.setCedula(resultSet.getString("Cedula"));
+	                aux.setAniosExp(resultSet.getInt("Agnos_Experiencia"));
+
+	                // Manejar el valor nulo en la columna "id_carrera" con try-catch
+	                try {
+	                    String idCarrera = resultSet.getString("id_carrera");
+	                    aux.setCarrera(idCarrera);
+	                } catch (SQLException e) {
+	                    // Si la columna "id_carrera" es nula, asignar un valor predeterminado o hacer lo que sea necesario
+	                    aux.setCarrera("Carrera no especificada");
+	                }
+
+	                aux.setNivel_educativo(resultSet.getString("Nivel_Educativo"));
+	                // No necesitas continuar el bucle si ya encontraste la solicitud
+	                break;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return aux;
+	}
+	/*public Solicitud buscarOfertaByCodigo(int codigo)
 	{
 		boolean encontrado = false;
 		int i = 0;
-		Solicitud aux = null;
+		
+		SoliEmpresa aux = new SoliEmpresa(null, false, null, false, null, (float) 0.00, null, null, 0.0f, null);
+	    String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad,Porcentaje_Match from Oferta_Empresa";
+	    try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+	         Statement statement = connection1.createStatement();
+	         ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-		String selectQuery = "select Codigo_Ciudad,Nombre_Ciudad from CIUDAD";
-        try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-             Statement statement = connection1.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+	        // Recorrer el resultado del conjunto de resultados (ResultSet)
+	        while (resultSet.next()) {
+	            int comparador = resultSet.getInt("Codigo");
+	            if (comparador == codigo) {
+	
+	                aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
+	                String movilidad = resultSet.getString("Mobilidad");
+	                if(movilidad.equalsIgnoreCase("Si")) {
+	                	aux.setMovilidad(true);
+	                }else {
+	                	aux.setMovilidad(false);
+	                }
+	                aux.setContrato(resultSet.getString("Contrato"));
+	                String licencia = resultSet.getString("Licencia");
+	                if(licencia.equalsIgnoreCase("Si")) {
+	                	aux.setLicencia(true);
+	                }else {
+	                	aux.setLicencia(false);
+	                }
+	                aux.setCuidad(resultSet.getString("id_ciudad"));
+	                aux.setSueldo(resultSet.getFloat("Sueldo"));
+	                aux.setIdiomas(resultSet.getString("id_idioma"));
+	                aux.setRnc(resultSet.getString("RNC"));
+	                aux.setPorcentajeMacth(resultSet.getFloat("Oferta_Empresa"));
+	                //aux.setTipoSalario(tipoSalario);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-            // Recorrer el resultado del conjunto de resultados (ResultSet)
-            while (resultSet.next()) {
-               
-            }
-
-        } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		return aux;
-	}
+	    return aux;
+	}*/
 
 	public Usuario buscarUsuarioByUsername(String username)
 	{

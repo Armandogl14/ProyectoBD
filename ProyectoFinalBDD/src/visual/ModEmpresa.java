@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -93,15 +97,50 @@ public class ModEmpresa extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						String antiguo = empresa.getRnc();
+						/*String antiguo = empresa.getRnc();
 						empresa.setRnc(txtRNC.getText());
 						empresa.setNombre(txtNombre.getText());
 						empresa.setTelefono(txtTelefono.getText());
-						empresa.setDireccion(txtDireccion.getText());
+						empresa.setDireccion(txtDireccion.getText());*/
+						Connection conn = null;
+						 PreparedStatement pstmt = null;
+						 try {
+					            // Establecer la conexión con la base de datos (reemplaza los valores adecuadamente)
+					            conn = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(),Bolsa.getPassword());
+
+					            // Consulta SQL para actualizar varios atributos de la persona por su ID
+					            String sql = "UPDATE Empresa SET RNC = ?, Nombre = ?, direccion = ? , Telefono = ? WHERE  RNC = ?";
+					            pstmt = conn.prepareStatement(sql);
+
+					            // Asignar los valores a los parámetros de la consulta
+					            pstmt.setString(5,txtRNC.getText());
+					            pstmt.setString(1,txtRNC.getText());
+					            pstmt.setString(2, txtNombre.getText());
+					            pstmt.setString(3, txtDireccion.getText());
+					            pstmt.setString(4, txtTelefono.getText());
+					            // Ejecutar la consulta de actualización
+					            int filasActualizadas = pstmt.executeUpdate();
+
+					            if (filasActualizadas > 0) {
+					                System.out.println("La persona con RNC  ha sido actualizada correctamente.");
+					            } else {
+					                System.out.println("No se encontró ninguna persona con RNC . No se realizó ninguna actualización.");
+					            }
+					        } catch (SQLException e1) {
+					            e1.printStackTrace();
+					        } finally {
+					            // Cerrar recursos (prepared statement y conexión)
+					            try {
+					                if (pstmt != null) pstmt.close();
+					                if (conn != null) conn.close();
+					            } catch (SQLException e1) {
+					                e1.printStackTrace();
+					            }
+					        }
 						JOptionPane.showMessageDialog(null, "Empresa Modificada", "Informacion",
 								JOptionPane.INFORMATION_MESSAGE);
 						ListEmpresa.loadEmpresas();
-						Bolsa.getInstance().cambiarRNC(antiguo, txtRNC.getText());
+						//Bolsa.getInstance().cambiarRNC(antiguo, txtRNC.getText());
 					}
 				});
 				btnModificar.setActionCommand("OK");
