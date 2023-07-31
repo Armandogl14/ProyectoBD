@@ -533,7 +533,7 @@ public class SolPersona extends JDialog
 										querySoliP.setString(1, mobilidadStr);
 										querySoliP.setString(2, cbxContrato.getSelectedItem().toString());
 										querySoliP.setString(3, licenciaStr);
-										querySoliP.setString(4, "Universitario");
+										querySoliP.setString(4, "Tecnico");
 										querySoliP.setFloat(5, Float.valueOf(spnSalario.getValue().toString()));
 										querySoliP.setString(6, "Si");
 										querySoliP.setString(7, txtCedula.getText());

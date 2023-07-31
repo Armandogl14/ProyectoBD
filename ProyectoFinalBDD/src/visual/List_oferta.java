@@ -213,7 +213,7 @@ public class List_oferta extends JDialog
 		}
 
 	}
-
+	
 	private void loadSolicitudes()
 	{
 		model.setRowCount(0);

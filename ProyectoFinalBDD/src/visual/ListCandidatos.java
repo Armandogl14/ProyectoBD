@@ -53,6 +53,7 @@ public class ListCandidatos extends JDialog
 
 	{
 		solicitudEmpresa = aux;
+		System.out.print(aux.getRnc());
 		setTitle("Lista de Cadidatos");
 		setBounds(100, 100, 683, 505);
 		setLocationRelativeTo(null);
@@ -152,7 +153,7 @@ public class ListCandidatos extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
-		String selectQuery = "select Codigo, Cedula, Nivel_Educativo_Deseado, id_carrera, id_area from Solicitud_Persona";
+		String selectQuery = "select Codigo, Cedula, Nivel_Educativo, id_carrera, id_area from Solicitud_Persona";
 		SoliPersona auxSolPerson = null;
 		Persona auxPerson = null;
 
@@ -164,7 +165,9 @@ public class ListCandidatos extends JDialog
 				auxSolPerson = Bolsa.getInstance().buscarSolicitudByCodigo(resultSet.getInt("Codigo"));		
 				auxPerson = Bolsa.getInstance().buscarPersonaByCedula(resultSet.getString("Cedula"));
 				float porcentaje = Bolsa.getInstance().match(solicitudEmpresa, auxSolPerson);
-				
+				System.out.println(auxPerson.getNombre());
+				System.out.println(auxSolPerson.getCodigo());
+				System.out.println(porcentaje);
 				rows[0] = resultSet.getInt("Codigo");
 				rows[1] = auxPerson.getId();
 				rows[2] = auxPerson.getNombre();
@@ -177,7 +180,7 @@ public class ListCandidatos extends JDialog
 				
 				rows[5] = String.valueOf(porcentaje);
 				
-				if(porcentaje >= solicitudEmpresa.getPorcentajeMacth() && Bolsa.getInstance().isSolicitudActiva(resultSet.getInt("Codigo")))
+				if(porcentaje >= solicitudEmpresa.getPorcentajeMacth() && resultSet.getString("Activa").equalsIgnoreCase("Si"))
 					model.addRow(rows);
 			}
 

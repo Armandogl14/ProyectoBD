@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -45,6 +50,7 @@ public class ListSoliEspecificas extends JDialog
 	private JButton btnMostrar;
 	private JButton btnEliminar;
 	private JButton btnSalir;
+	private boolean match;
 
 	public ListSoliEspecificas(Persona paux, Empresa eaux)
 	{
@@ -165,8 +171,155 @@ public class ListSoliEspecificas extends JDialog
 		}
 		loadSolicitudes();
 	}
+	private void loadOferta()
+	{
+		model.setRowCount(0);
+		rows = new Object[model.getColumnCount()];
+		String selectQuery = "select Codigo, RNC, Nivel_Educativo_Deseado, Contrato, Mobilidad, Licencia, Sueldo,id_carrera,id_area,id_idioma,id_ciudad,Activa from Oferta_Empresa where ";
+        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+                 rows[0] = String.valueOf(resultSet.getInt("Codigo"));
+                 rows[1] = resultSet.getString("RNC");
+                 rows[2] = resultSet.getString("Nivel_Educativo_Deseado");
+                 rows[3] = resultSet.getString("Contrato");
+                 rows[4] = resultSet.getString("Mobilidad");
+                 rows[5] = resultSet.getString("Licencia");
+                 rows[6] = String.valueOf(resultSet.getFloat("Sueldo"));
+                 rows[7] = resultSet.getString("id_carrera");
+                 rows[8] = resultSet.getString("id_area");
+                 rows[9] = resultSet.getString("id_idioma");
+                 rows[10] = resultSet.getString("id_ciudad");
+                 rows[11] = resultSet.getString("Activa");
+                 
+                 if(match && resultSet.getString("Activa").equalsIgnoreCase("No"));
+                 
+                 else
+               	  model.addRow(rows);
+            }
 
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		/*for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
+		{
+			if (solicitud instanceof SoliPersona)
+				persona = Bolsa.getInstance().buscarPersonaByCedula(((SoliPersona) solicitud).getCedula());
+			if (solicitud instanceof SoliEmpresa)
+				empresa = Bolsa.getInstance().buscarEmpresaByRNC(((SoliEmpresa) solicitud).getRnc());
+
+			if (persona != null || empresa != null)
+			{
+				rows[0] = solicitud.getCodigo();
+
+				rows[1] = solicitud instanceof SoliEmpresa ? "Empresa" : solicitud instanceof SoliPersona ? "Persona" : "";
+				rows[2] = solicitud instanceof SoliEmpresa ? ((SoliEmpresa) solicitud).getRnc()
+						: solicitud instanceof SoliPersona ? ((SoliPersona) solicitud).getCedula() : "";
+
+				rows[3] = solicitud instanceof SoliEmpresa ? empresa.getNombre()
+						: solicitud instanceof SoliPersona ? persona.getNombre() : "";
+
+				if (solicitud instanceof SoliPersona)
+					rows[4] = persona instanceof Universitario ? "Universatario"
+							: persona instanceof Tecnico ? "Tecnico" : "";
+
+				else if (solicitud instanceof SoliEmpresa)
+					rows[4] = solicitud instanceof EmpUniversitario ? "Universatario"
+							: solicitud instanceof EmpTecnico ? "Tecnico" : "";
+
+				rows[5] = solicitud instanceof SoliPersona ? "1"
+						: solicitud instanceof SoliEmpresa ? "1" : "";
+
+				rows[6] = solicitud.isActiva() ? "Activa" : "Inactiva";
+
+				persona = null;
+				empresa = null;
+
+				if ((solicitud instanceof SoliPersona && match))
+					;
+				else if (match && !solicitud.isActiva())
+					;
+				else
+					model.addRow(rows);
+			}
+		}*/
+	}
 	private void loadSolicitudes()
+	{
+		model.setRowCount(0);
+		rows = new Object[model.getColumnCount()];
+		String selectQuery = "select Codigo, Cedula, Nivel_Educativo, Contrato, Mobilidad, Licencia, Sueldo,id_carrera,id_area,id_idioma,id_ciudad,Activa from Solicitud_Persona";
+        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+             Statement statement = connection1.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            // Recorrer el resultado del conjunto de resultados (ResultSet)
+            while (resultSet.next()) {
+                 rows[0] = resultSet.getInt("Codigo");
+                 rows[1] = resultSet.getString("Cedula");
+                 rows[2] = resultSet.getString("Nivel_Educativo");
+                 rows[3] = resultSet.getString("Contrato");
+                 rows[4] = resultSet.getString("Mobilidad");
+                 rows[5] = resultSet.getString("Licencia");
+                 rows[6] = resultSet.getFloat("Sueldo");
+                 rows[7] = resultSet.getString("id_carrera");
+                 rows[8] = resultSet.getString("id_area");
+                 rows[9] = resultSet.getString("id_idioma");
+                 rows[10] = resultSet.getString("id_ciudad");
+                 rows[11] = resultSet.getString("Activa");
+                 model.addRow(rows);
+            }
+
+        } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		/*for (Solicitud solicitud : Bolsa.getInstance().getSolicitudes())
+		{
+			if (solicitud instanceof SoliPersona)
+				persona = Bolsa.getInstance().buscarPersonaByCedula(((SoliPersona) solicitud).getCedula());
+			if (solicitud instanceof SoliEmpresa)
+				empresa = Bolsa.getInstance().buscarEmpresaByRNC(((SoliEmpresa) solicitud).getRnc());
+
+			if (persona != null || empresa != null)
+			{
+				rows[0] = solicitud.getCodigo();
+
+				rows[1] = solicitud instanceof SoliEmpresa ? "Empresa" : solicitud instanceof SoliPersona ? "Persona" : "";
+				rows[2] = solicitud instanceof SoliEmpresa ? ((SoliEmpresa) solicitud).getRnc()
+						: solicitud instanceof SoliPersona ? ((SoliPersona) solicitud).getCedula() : "";
+
+				rows[3] = solicitud instanceof SoliEmpresa ? empresa.getNombre()
+						: solicitud instanceof SoliPersona ? persona.getNombre() : "";
+
+				if (solicitud instanceof SoliPersona)
+					rows[4] = persona instanceof Universitario ? "Universatario"
+							: persona instanceof Tecnico ? "Tecnico" : "";
+
+				else if (solicitud instanceof SoliEmpresa)
+					rows[4] = solicitud instanceof EmpUniversitario ? "Universatario"
+							: solicitud instanceof EmpTecnico ? "Tecnico" : "";
+
+				rows[5] = solicitud instanceof SoliPersona ? "1"
+						: solicitud instanceof SoliEmpresa ? "1" : "";
+
+				rows[6] = solicitud.isActiva() ? "Activa" : "Inactiva";
+
+				persona = null;
+				empresa = null;
+
+				if ((solicitud instanceof SoliPersona && match))
+					;
+				else if (match && !solicitud.isActiva())
+					;
+				else
+					model.addRow(rows);
+			}
+		}*/
+	}
+	/*private void loadSolicitudes()
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
@@ -214,6 +367,6 @@ public class ListSoliEspecificas extends JDialog
 				empresa = null;
 			}
 		}
-	}
+	}*/
 
 }

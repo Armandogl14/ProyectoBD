@@ -240,7 +240,7 @@ public class Bolsa implements Serializable
 	}
 	public SoliEmpresa buscarOfertaByCodigo(int codigo) {
 		SoliEmpresa aux = null;
-		String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad, Anios_Experiencia, Porcentaje_Match from Oferta_Empresa";
+		String selectQuery = "select Codigo,Mobilidad,Contrato,Licencia,Nivel_Educativo_Deseado,Sueldo,Activa,RNC,id_carrera,id_area,id_idioma,id_ciudad, Agnos_Experiencia, Porcentaje_Match from Oferta_Empresa";
 		try (Connection connection1 = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
 				Statement statement = connection1.createStatement();
 				ResultSet resultSet = statement.executeQuery(selectQuery)) {
@@ -259,7 +259,7 @@ public class Bolsa implements Serializable
 					else if(resultSet.getString("Nivel_Educativo_Deseado").equalsIgnoreCase("Tecnico"))
 					{
 						aux = new EmpTecnico(null, false, null, false, null, null, 0, 0, null, null, (short) 0);
-						((EmpTecnico) aux).setArea(resultSet.getString("Area"));
+						((EmpTecnico) aux).setArea(resultSet.getString("id_area"));
 					}
 
 					aux.setCodigo(String.valueOf(resultSet.getInt("Codigo")));
@@ -821,7 +821,8 @@ public class Bolsa implements Serializable
 
 	public boolean isSolicitudActiva(int Code)
 	{
-		boolean Activa = false;
+		System.out.println(Code);
+		/*boolean Activa = false;
 		Connection conexion = abrirConexion();
 		String select = "select Codigo, Activa from Solicitud_Persona where Codigo = "+Code;
 
@@ -838,6 +839,25 @@ public class Bolsa implements Serializable
 			e.printStackTrace();
 		}
 
-		return Activa;
+		return Activa;*/
+		boolean Activa = false;
+        Connection conexion = abrirConexion();
+        String select = "select Codigo, Activa from Solicitud_Persona where Codigo = (?)";
+
+        try
+        {
+            PreparedStatement stmnt = conexion.prepareStatement(select);
+            stmnt.setInt(1, Code);
+            ResultSet result = stmnt.executeQuery(select);
+
+            if(result.getString("Activa").equalsIgnoreCase("Si"))
+                Activa = true;
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return Activa;
 	}
 }
