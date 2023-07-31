@@ -153,7 +153,7 @@ public class ListCandidatos extends JDialog
 	{
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
-		String selectQuery = "select Codigo, Cedula, Nivel_Educativo, id_carrera, id_area from Solicitud_Persona";
+		String selectQuery = "select Codigo, Cedula, Nivel_Educativo, id_carrera, id_area, Activa from Solicitud_Persona";
 		SoliPersona auxSolPerson = null;
 		Persona auxPerson = null;
 
