@@ -456,44 +456,47 @@ public class SolPersona extends JDialog
 					{
 						if (solicitud == null)
 						{
+							Persona person = Bolsa.getInstance().buscarPersonaByCedula(txtCedula.getText());
 							if (validar())
 							{
-								if (rdbtnUniversitario.isSelected())
+								if(person == null)
 								{
-									try {
-										PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+									if (rdbtnUniversitario.isSelected())
+									{
+										try {
+											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
 
-										queryPerson.setString(1, txtCedula.getText());
-										queryPerson.setString(2, txtNombre.getText());
-										queryPerson.setString(3, txtTelefono.getText());
-										queryPerson.setString(4, txtDireccion.getText());
-										queryPerson.setString(5, "No");
-										queryPerson.setString(6, "Universitario");
-										queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
-										int filasInsertadas = queryPerson.executeUpdate();
-									} catch (SQLException e1){
-										System.err.println("Error.");
+											queryPerson.setString(1, txtCedula.getText());
+											queryPerson.setString(2, txtNombre.getText());
+											queryPerson.setString(3, txtTelefono.getText());
+											queryPerson.setString(4, txtDireccion.getText());
+											queryPerson.setString(5, "No");
+											queryPerson.setString(6, "Universitario");
+											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+											int filasInsertadas = queryPerson.executeUpdate();
+										} catch (SQLException e1){
+											System.err.println("Error.");
+										}
+									}
+
+									else if (rdbtnTecnico.isSelected())
+									{
+										try {
+											PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
+
+											queryPerson.setString(1, txtCedula.getText());
+											queryPerson.setString(2, txtNombre.getText());
+											queryPerson.setString(3, txtTelefono.getText());
+											queryPerson.setString(4, txtDireccion.getText());
+											queryPerson.setString(5, "No");
+											queryPerson.setString(6, "Tecnico");
+											queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+											int filasInsertadas = queryPerson.executeUpdate();
+										} catch (SQLException e1){
+											System.err.println("Error.");
+										}
 									}
 								}
-
-								else if (rdbtnTecnico.isSelected())
-								{
-									try {
-										PreparedStatement queryPerson = conexion.prepareStatement(insertPersona);
-
-										queryPerson.setString(1, txtCedula.getText());
-										queryPerson.setString(2, txtNombre.getText());
-										queryPerson.setString(3, txtTelefono.getText());
-										queryPerson.setString(4, txtDireccion.getText());
-										queryPerson.setString(5, "No");
-										queryPerson.setString(6, "Tecnico");
-										queryPerson.setString(7, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
-										int filasInsertadas = queryPerson.executeUpdate();
-									} catch (SQLException e1){
-										System.err.println("Error.");
-									}
-								}
-
 
 								if (rdbtnMudarseSi.isSelected())
 									mobilidadStr = "Si";
