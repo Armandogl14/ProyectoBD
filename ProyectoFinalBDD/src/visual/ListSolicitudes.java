@@ -35,7 +35,7 @@ import logico.Solicitud;
 import logico.Tecnico;
 import logico.Universitario;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class ListSolicitudes extends JDialog
 {
 
@@ -52,6 +52,7 @@ public class ListSolicitudes extends JDialog
 	private Boolean match = false;
 	private JButton btnSelecionar;
 	private JButton btnModificar;
+	private Connection conexion = Bolsa.abrirConexion();
 
 	public ListSolicitudes(boolean match)
 	{
@@ -174,9 +175,22 @@ public class ListSolicitudes extends JDialog
 									"Confirmación", JOptionPane.YES_NO_OPTION);
 							if (option == JOptionPane.OK_OPTION)
 							{
-								Bolsa.getInstance().eliminarSolicitud(selected);
-								loadSolicitudes();
+								try
+								{
+									String borrar = "Delete from Solicitud_Persona" + " where Codigo = " + Integer.parseInt(selected.getCodigo());
+									
+									Statement del = conexion.createStatement();
+									
+									del.executeUpdate(borrar);
+								}
+								catch (SQLException e2)
+								{
+									JOptionPane.showMessageDialog(null, "Error al eliminar", "Informacion",
+											JOptionPane.INFORMATION_MESSAGE);
+								}
 							}
+							
+							btnEliminar.setEnabled(false);
 						}
 					}
 				});

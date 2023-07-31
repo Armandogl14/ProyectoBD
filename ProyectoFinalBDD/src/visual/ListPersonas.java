@@ -28,7 +28,7 @@ import logico.Persona;
 import logico.Tecnico;
 import logico.Universitario;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class ListPersonas extends JDialog
 {
 
@@ -42,6 +42,7 @@ public class ListPersonas extends JDialog
 
 	private JButton btnMod;
 	private JButton btnListarSolicitudes;
+	private Connection conexion = Bolsa.abrirConexion();
 
 	public ListPersonas()
 	{
@@ -101,23 +102,27 @@ public class ListPersonas extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (Bolsa.getInstance().isLibreSoliPer(selected.getId()))
+						int option;
+						option = JOptionPane.showConfirmDialog(null,
+								"Esta seguro que desea eliminar a: " + selected.getNombre(), "Confirmacion",
+								JOptionPane.YES_NO_OPTION);
+						if (option == JOptionPane.OK_OPTION)
 						{
-							int option;
-							option = JOptionPane.showConfirmDialog(null,
-									"Esta seguro que desea eliminar a: " + selected.getNombre(), "Confirmacion",
-									JOptionPane.YES_NO_OPTION);
-							if (option == JOptionPane.OK_OPTION)
+							try
 							{
-								Bolsa.getInstance().eliminarPersona(selected);
-								loadPersons();
-								btnEliminar.setEnabled(false);
-							}
-						}
+								String borrar = "Delete from Persona" + " where Cedula = " + Integer.parseInt(selected.getId());
 
-						else
-							JOptionPane.showMessageDialog(null, "Error: Persona Vinculada", "Informacion",
-									JOptionPane.INFORMATION_MESSAGE);
+								Statement del = conexion.createStatement();
+
+								del.executeUpdate(borrar);
+							}
+							catch (SQLException e2)
+							{
+								JOptionPane.showMessageDialog(null, "Error: Persona Vinculada", "Informacion",
+										JOptionPane.INFORMATION_MESSAGE);
+							}
+							btnEliminar.setEnabled(false);
+						}
 					}
 				});
 				{
@@ -174,25 +179,25 @@ public class ListPersonas extends JDialog
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado,Nivel_Educativo,id_ciudad from Persona";
-        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
-             Statement statement = connection1.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectQuery)) {
-            // Recorrer el resultado del conjunto de resultados (ResultSet)
-            while (resultSet.next()) {
-                 rows[0] = resultSet.getString("Cedula");
-                 rows[1] = resultSet.getString("Nombre");
-                 rows[2] = resultSet.getString("Telefono");
-                 rows[3] = resultSet.getString("Direccion");
-                 rows[4] = resultSet.getString("Contratado");
-                 rows[5] = resultSet.getString("Nivel_Educativo");
-                 rows[6] = resultSet.getString("id_ciudad");
-                 model.addRow(rows);
-            }
+		try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				rows[0] = resultSet.getString("Cedula");
+				rows[1] = resultSet.getString("Nombre");
+				rows[2] = resultSet.getString("Telefono");
+				rows[3] = resultSet.getString("Direccion");
+				rows[4] = resultSet.getString("Contratado");
+				rows[5] = resultSet.getString("Nivel_Educativo");
+				rows[6] = resultSet.getString("id_ciudad");
+				model.addRow(rows);
+			}
 
-        } catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-	
+
 	}
 }

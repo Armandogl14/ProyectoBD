@@ -33,7 +33,7 @@ import logico.Solicitud;
 import logico.Tecnico;
 import logico.Universitario;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class ListCandidatos extends JDialog
 {
 

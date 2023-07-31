@@ -40,6 +40,7 @@ public class ListEmpresa extends JDialog
 	private Empresa selected = null;
 	private JButton btnModificar;
 	private JButton btnListarSolicitudes;
+	private Connection conexion = Bolsa.abrirConexion();
 
 	public ListEmpresa()
 	{
@@ -97,23 +98,28 @@ public class ListEmpresa extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (Bolsa.getInstance().isLibreSoliEmp(selected.getRnc()))
+						int option;
+						option = JOptionPane.showConfirmDialog(null,
+								"Esta seguro que desea eliminar a: " + selected.getNombre(), "Confirmacion",
+								JOptionPane.YES_NO_OPTION);
+						if(option == JOptionPane.OK_OPTION)
 						{
-							int option;
-							option = JOptionPane.showConfirmDialog(null,
-									"Esta seguro que desea eliminar a: " + selected.getNombre(), "Confirmacion",
-									JOptionPane.YES_NO_OPTION);
-							if (option == JOptionPane.OK_OPTION)
+							try
 							{
-								Bolsa.getInstance().eliminarEmpresa(selected);
-								loadEmpresas();
-								btnEliminar.setEnabled(false);
+								String borrar = "Delete from Empresa" + " where RNC = " + Integer.parseInt(selected.getRnc());
+
+								Statement del = conexion.createStatement();
+
+								del.executeUpdate(borrar);
+							}
+							catch (SQLException e2)
+							{
+								JOptionPane.showMessageDialog(null, "Error al eliminar, empresa vinculada", "Informacion",
+										JOptionPane.INFORMATION_MESSAGE);
 							}
 						}
-						else
-							JOptionPane.showMessageDialog(null, "Error: Empresa vinculada", "Informacion",
-									JOptionPane.INFORMATION_MESSAGE);
 
+						btnEliminar.setEnabled(false);
 					}
 				});
 				{
@@ -170,25 +176,25 @@ public class ListEmpresa extends JDialog
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		String selectQuery = "select RNC,Nombre,Telefono,Direccion,id_ciudad from Empresa";
-        try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
-             Statement statement = connection1.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+		try (Connection connection1 = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(), Bolsa.getPassword());
+				Statement statement = connection1.createStatement();
+				ResultSet resultSet = statement.executeQuery(selectQuery)) {
 
-            // Recorrer el resultado del conjunto de resultados (ResultSet)
-            while (resultSet.next()) {
-                 rows[0] = resultSet.getString("RNC");
-                 rows[1] = resultSet.getString("Nombre");
-                 rows[2] = resultSet.getString("Telefono");
-                 rows[3] = resultSet.getString("Direccion");
-                 rows[4] = resultSet.getString("id_ciudad");
-                 model.addRow(rows);
-            }
+			// Recorrer el resultado del conjunto de resultados (ResultSet)
+			while (resultSet.next()) {
+				rows[0] = resultSet.getString("RNC");
+				rows[1] = resultSet.getString("Nombre");
+				rows[2] = resultSet.getString("Telefono");
+				rows[3] = resultSet.getString("Direccion");
+				rows[4] = resultSet.getString("id_ciudad");
+				model.addRow(rows);
+			}
 
-        } catch (SQLException e) {
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		
+
 		/*for (Empresa empresa : Bolsa.getInstance().getEmpresas())
 		{
 			rows[0] = empresa.getRnc();
