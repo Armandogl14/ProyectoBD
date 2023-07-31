@@ -453,8 +453,6 @@ public class Bolsa implements Serializable
 				((SoliPersona) solicitud).setCedula(nuevo);
 	}
 
-
-
 	public boolean confirmarLogin(String username, String password)
 	{
 		boolean login = false;
