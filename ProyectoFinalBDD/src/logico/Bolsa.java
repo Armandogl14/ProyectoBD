@@ -155,16 +155,16 @@ public class Bolsa implements Serializable
 
 	// Método para cerrar la conexión
 	public void cerrarConexion(Connection connection) {
-	    try {
-	        if (connection != null && !connection.isClosed()) {
-	            connection.close();
-	            System.out.println("Conexión cerrada con SQL Server.");
-	        }
-	    } catch (SQLException e) {
-	        System.err.println("Error al cerrar la conexión con SQL Server: " + e.getMessage());
-	    }
+		try {
+			if (connection != null && !connection.isClosed()) {
+				connection.close();
+				System.out.println("Conexión cerrada con SQL Server.");
+			}
+		} catch (SQLException e) {
+			System.err.println("Error al cerrar la conexión con SQL Server: " + e.getMessage());
+		}
 	}
-	
+
 	public Empresa buscarEmpresaByRNC(String rnc)
 	{
 		/*boolean encontrado = false;
@@ -218,7 +218,7 @@ public class Bolsa implements Serializable
 			while (resultSet.next()) {
 				String comparador = resultSet.getString("Cedula");
 				if (comparador.equalsIgnoreCase(cedula)) {
-					
+
 					aux = new Persona(null, null, null, null);
 					aux.setNombre(resultSet.getString("Nombre"));
 					aux.setId(resultSet.getString("Cedula"));
@@ -484,7 +484,7 @@ public class Bolsa implements Serializable
 		float puntaje = compararArea(solicitudEmpresa, solicitudPersona);
 		Persona persona = buscarPersonaByCedula(solicitudPersona.getCedula());
 
-		if (puntaje > 0 && persona != null)
+		if (puntaje > 0)
 		{
 			puntaje += compararContratos(solicitudEmpresa.getContrato(), solicitudPersona.getContrato());
 			puntaje += comprarSueldo(solicitudEmpresa.getSueldo(), solicitudPersona.getSueldo());
@@ -596,22 +596,18 @@ public class Bolsa implements Serializable
 	public float compararArea(SoliEmpresa solicitudEmpresa, SoliPersona solicitudPersona)
 	{
 		float total = -1;//24
-		Persona persona = buscarPersonaByCedula(solicitudPersona.getCedula());
-
-		if (persona != null)
+		
+		if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
 		{
-			if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
-			{
-				if (((EmpUniversitario) solicitudEmpresa).getCarrera()
-						.equalsIgnoreCase(solicitudPersona.getCarrera()))
-					total = 24;
-			}
-			else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
-			{
-				if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(solicitudPersona.getArea()))
-					total = 24;
-			}
+			if (((EmpUniversitario) solicitudEmpresa).getCarrera().equalsIgnoreCase(solicitudPersona.getCarrera()))
+				total = 24;
 		}
+		else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
+		{
+			if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(solicitudPersona.getArea()))
+				total = 24;
+		}
+
 		return total;
 	}
 
@@ -841,23 +837,23 @@ public class Bolsa implements Serializable
 
 		return Activa;*/
 		boolean Activa = false;
-        Connection conexion = abrirConexion();
-        String select = "select Codigo, Activa from Solicitud_Persona where Codigo = (?)";
+		Connection conexion = abrirConexion();
+		String select = "select Codigo, Activa from Solicitud_Persona where Codigo = (?)";
 
-        try
-        {
-            PreparedStatement stmnt = conexion.prepareStatement(select);
-            stmnt.setInt(1, Code);
-            ResultSet result = stmnt.executeQuery(select);
+		try
+		{
+			PreparedStatement stmnt = conexion.prepareStatement(select);
+			stmnt.setInt(1, Code);
+			ResultSet result = stmnt.executeQuery(select);
 
-            if(result.getString("Activa").equalsIgnoreCase("Si"))
-                Activa = true;
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
+			if(result.getString("Activa").equalsIgnoreCase("Si"))
+				Activa = true;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 
-        return Activa;
+		return Activa;
 	}
 }
