@@ -603,12 +603,12 @@ public class Bolsa implements Serializable
 			if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
 			{
 				if (((EmpUniversitario) solicitudEmpresa).getCarrera()
-						.equalsIgnoreCase(((Universitario) persona).getCarrera()))
+						.equalsIgnoreCase(solicitudPersona.getCarrera()))
 					total = 24;
 			}
 			else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
 			{
-				if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(((Tecnico) persona).getArea()))
+				if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(solicitudPersona.getArea()))
 					total = 24;
 			}
 		}
