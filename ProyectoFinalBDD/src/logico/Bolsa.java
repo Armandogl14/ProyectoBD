@@ -253,7 +253,7 @@ public class Bolsa implements Serializable
 					if(resultSet.getString("Nivel_Educativo_Deseado").equalsIgnoreCase("Universitario"))
 					{
 						aux = new EmpUniversitario(null, false, null, false, null, null, 0, 0, null, null, (short) 0);
-						((EmpUniversitario) aux).setCarrera(resultSet.getString("Carrera"));
+						((EmpUniversitario) aux).setCarrera(resultSet.getString("id_carrera"));
 					}
 
 					else if(resultSet.getString("Nivel_Educativo_Deseado").equalsIgnoreCase("Tecnico"))
@@ -596,18 +596,20 @@ public class Bolsa implements Serializable
 	public float compararArea(SoliEmpresa solicitudEmpresa, SoliPersona solicitudPersona)
 	{
 		float total = -1;//24
-		
-		if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
-		{
-			if (((EmpUniversitario) solicitudEmpresa).getCarrera().equalsIgnoreCase(solicitudPersona.getCarrera()))
-				total = 24;
-		}
-		else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
-		{
-			if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(solicitudPersona.getArea()))
-				total = 24;
-		}
 
+		if(solicitudEmpresa != null && solicitudPersona != null)
+		{
+			if (solicitudEmpresa instanceof EmpUniversitario && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Universitario"))
+			{
+				if (((EmpUniversitario) solicitudEmpresa).getCarrera().equalsIgnoreCase(solicitudPersona.getCarrera()))
+					total = 24;
+			}
+			else if (solicitudEmpresa instanceof EmpTecnico && solicitudPersona.getNivel_educativo().equalsIgnoreCase("Tecnico"))
+			{
+				if (((EmpTecnico) solicitudEmpresa).getArea().equalsIgnoreCase(solicitudPersona.getArea()))
+					total = 24;
+			}
+		}
 		return total;
 	}
 
