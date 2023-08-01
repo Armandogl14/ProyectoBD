@@ -167,6 +167,7 @@ public class Bolsa implements Serializable
 
 	public Empresa buscarEmpresaByRNC(String rnc)
 	{
+		int vacio = 0;
 		/*boolean encontrado = false;
 		int i = 0;
 		Empresa aux = null;
