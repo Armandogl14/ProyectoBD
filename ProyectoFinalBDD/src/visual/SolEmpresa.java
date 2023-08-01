@@ -475,7 +475,8 @@ public class SolEmpresa extends JDialog
 							if (validar())
 							{
 								Solicitud solicitudNew = null;
-								if (!Bolsa.getInstance().existeEmpresa(txtRNC.getText()))
+								Empresa auxEmp = Bolsa.getInstance().buscarEmpresaByRNC(txtRNC.getText());
+								if (auxEmp == null)
 								{
 									try
 									{

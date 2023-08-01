@@ -22,7 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import logico.Bolsa;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unused" })
 public class login extends JDialog
 {
 
@@ -97,7 +97,7 @@ public class login extends JDialog
 						Principal principal = new Principal();
 						dispose();
 						principal.setVisible(true);
-						/*if (Bolsa.getInstance().confirmarLogin(txtUsername.getText(),
+						if (Bolsa.getInstance().confirmarLogin(txtUsername.getText(),
 								String.valueOf(pswPassword.getPassword())))
 						{
 							//Principal principal = new Principal();
@@ -106,8 +106,7 @@ public class login extends JDialog
 						}
 						else
 							JOptionPane.showMessageDialog(null, "Parametros Incorrectos", "Informacion",
-									JOptionPane.INFORMATION_MESSAGE);
-						*/
+									JOptionPane.INFORMATION_MESSAGE);	
 					}
 				});
 				btnIngresar.setActionCommand("OK");

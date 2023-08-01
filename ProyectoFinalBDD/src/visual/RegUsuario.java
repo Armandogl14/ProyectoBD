@@ -99,7 +99,7 @@ public class RegUsuario extends JDialog
 										PreparedStatement queryUser = conexion.prepareStatement(insertUser);){
 	
 									queryUser.setString(1, txtUsername.getText());
-									queryUser.setString(2, pswPassword.getPassword().toString());
+									queryUser.setString(2, String.valueOf(pswPassword.getPassword()));
 									int filasInsertadas = queryUser.executeUpdate();
 								} catch (SQLException e1){
 									System.err.println("Error.");

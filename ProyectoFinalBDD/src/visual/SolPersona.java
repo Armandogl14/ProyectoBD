@@ -506,11 +506,6 @@ public class SolPersona extends JDialog
 								if (rdbtnLicenciaSi.isSelected())
 									licenciaStr = "Si";
 
-								/*SoliPersona soli = new SoliPersona(txtCodigo.getText(), mov,
-										cbxContrato.getSelectedItem().toString(), lic, cbxCiudad.getSelectedItem().toString(),
-										Float.valueOf(spnSalario.getValue().toString()), idiomasAux, txtCedula.getText());
-								Bolsa.getInstance().addSolicitud(soli);*/
-
 								try
 								{
 									if(rdbtnUniversitario.isSelected()) {
