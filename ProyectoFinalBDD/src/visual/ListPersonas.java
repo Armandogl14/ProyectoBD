@@ -176,8 +176,10 @@ public class ListPersonas extends JDialog
 		loadPersons();
 	}
 
+	
 	public static void loadPersons()
 	{
+		int vacio = 0;
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		String selectQuery = "select Cedula,Nombre,Telefono,Direccion,Contratado,Nivel_Educativo,id_ciudad from Persona";

@@ -175,6 +175,7 @@ public class ListEmpresa extends JDialog
 
 	public static void loadEmpresas()
 	{
+		int vacio = 0;
 		model.setRowCount(0);
 		rows = new Object[model.getColumnCount()];
 		String selectQuery = "select RNC,Nombre,Telefono,Direccion,id_ciudad from Empresa";
