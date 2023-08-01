@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,6 +85,7 @@ public class SolEmpresa extends JDialog
 	private Connection  conexion = Bolsa.abrirConexion();
 	private String insertSoli = "Insert into Oferta_Empresa (Mobilidad, Contrato, Licencia, Nivel_Educativo_Deseado, Sueldo, Activa, RNC, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia, Porcentaje_Match) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertEmp = "insert into Empresa (RNC, Nombre, Telefono, Direccion, id_ciudad) values (?, ?, ?, ?, ?)";
+	private String updateSoli = "update Oferta_Empresa set Mobilidad = ?, Contrato = ?, Licencia = ? , Nivel_Educativo_Deseado = ?, Sueldo = ?, Activa = ?, RNC = ? , id_carrera = ?, id_area = ?, id_idioma = ?, id_ciudad = ?, Agnos_Experiencia = ?, Porcentaje_Match = ? where Codigo = ?";
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
 	private Empresa auxEmp = null;
@@ -92,10 +94,11 @@ public class SolEmpresa extends JDialog
 	public SolEmpresa(SoliEmpresa aux1)
 	{
 		SoliEmpresa  aux = aux1;
+		System.out.println(aux.getRnc());
 		setResizable(false);
 		setTitle("Registrar Solicitud de Empresa");
-		if (solicitud != null) // mod
-			setTitle("Modificar Solicitud de " + solicitud.getRnc()); // mod
+		if (aux != null) // mod
+			setTitle("Modificar Solicitud de " + aux.getRnc()); // mod
 		setBounds(100, 100, 613, 920);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
@@ -488,14 +491,14 @@ public class SolEmpresa extends JDialog
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnSolicitar = new JButton("Solicitar");
-				if (solicitud != null) // mod
+				if (aux != null) // mod
 					btnSolicitar.setText("Modificar");
 				btnSolicitar.addActionListener(new ActionListener()
 				{
 
 					public void actionPerformed(ActionEvent e)
 					{
-						if (solicitud == null) // mod
+						if (aux == null) // mod
 						{
 							if (validar())
 							{
@@ -587,29 +590,85 @@ public class SolEmpresa extends JDialog
 						{
 							if (validar())
 							{
-								if (rdbtnMudarseSi.isSelected())
+								if (rdbtnMudarseSi.isSelected()) {
 									mov = true;
-
-								if (rdbtnLicenciaSi.isSelected())
+									mobilidadStr = "Si";
+									}else {
+										mobilidadStr = "No";
+									}
+								if (rdbtnLicenciaSi.isSelected()) {
 									lic = true;
-
-								solicitud.setContrato(cbxContrato.getSelectedItem().toString());
-								solicitud.setSueldo(Float.valueOf(spnSalario.getValue().toString()));
-								solicitud.setCuidad(cbxCiudad.getSelectedItem().toString());
-								//solicitud.setIdiomas(txtIdiomas.getText());
-								solicitud.setLicencia(lic);
-								solicitud.setPorcentajeMacth(Float.valueOf(spnPorcentaje.getValue().toString()));
-								if (solicitud instanceof EmpUniversitario)
-								{
-									((EmpUniversitario) solicitud).setCarrera(cbxCarrera.getSelectedItem().toString());
-									((EmpUniversitario) solicitud).setAngos(Short.valueOf(spnAgnos.getValue().toString()));
-
+									licenciaStr = "Si";
+								}else {
+									licenciaStr = "No";
 								}
-								else if (solicitud instanceof EmpTecnico)
-								{
-									((EmpTecnico) solicitud).setArea(cbxArea.getSelectedItem().toString());
-									((EmpTecnico) solicitud).setAngos(Short.valueOf(spnAgnos.getValue().toString()));
-								}
+									
+								Connection conn = null;
+								PreparedStatement pstmt = null;
+								 try {
+							            // Establecer la conexión con la base de datos (reemplaza los valores adecuadamente)
+							            conn = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(),Bolsa.getPassword());
+							            pstmt = conn.prepareStatement(updateSoli);
+							            int filasActualizadas = 0; 
+	
+							            
+							            if(rdbtnUniversitario.isSelected()) {
+											PreparedStatement querySoliP = conexion.prepareStatement(updateSoli);
+											    pstmt.setInt(14,Integer.valueOf(aux.getCodigo()));
+											 	pstmt.setString(1,mobilidadStr);
+									            pstmt.setString(2, cbxContrato.getSelectedItem().toString());
+									            pstmt.setString(3, licenciaStr);
+									            pstmt.setString(4, "Universitario");
+									            pstmt.setFloat(5,Float.valueOf(spnSalario.getValue().toString()));
+									            pstmt.setString(6, "Si");
+									            pstmt.setString(7, txtRNC.getText());
+									            pstmt.setString(8, cbxCarrera.getSelectedItem().toString().substring(0, cbxCarrera.getSelectedItem().toString().indexOf(" ")));
+									            pstmt.setString(9, null);
+									            pstmt.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
+									            pstmt.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+									            pstmt.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+									            pstmt.setFloat(13, Float.valueOf(spnPorcentaje.getValue().toString()));
+									            filasActualizadas = pstmt.executeUpdate();
+							            }
+										else if(rdbtnTecnico.isSelected()) {
+											PreparedStatement querySoliP = conexion.prepareStatement(updateSoli);
+											
+											pstmt.setInt(14,Integer.valueOf(aux.getCodigo()));
+											pstmt.setString(1,mobilidadStr);
+								            pstmt.setString(2, cbxContrato.getSelectedItem().toString());
+								            pstmt.setString(3, licenciaStr);
+								            pstmt.setString(4, "Tecnico");
+								            pstmt.setFloat(5,Float.valueOf(spnSalario.getValue().toString()));
+								            pstmt.setString(6, "Si");
+								            pstmt.setString(7, txtRNC.getText());
+								            pstmt.setString(8, null);
+								            pstmt.setString(9, cbxArea.getSelectedItem().toString().substring(0, cbxArea.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setString(10, cbxIdiomas.getSelectedItem().toString().substring(0, cbxIdiomas.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+								            pstmt.setFloat(13, Float.valueOf(spnPorcentaje.getValue().toString()));
+								            filasActualizadas = pstmt.executeUpdate();
+											
+										}
+//"update Oferta_Empresa set Mobilidad = ?, Contrato = ?, Licencia = ? , Nivel_Educativo_Deseado = ?, Sueldo = ?, Activa = ?, 
+//RNC = ? , id_carrera = ?, id_area = ?, id_idioma = ?, id_ciudad = ?, Agnos_Experiencia = ?, Porcentaje_Match = ? where Codigo = ?";
+							            if (filasActualizadas > 0) {
+							                System.out.println("La Oferta ha sido actualizada correctamente.");
+							            } else {
+							                System.out.println("No se encontró ninguna Oferta con el codigo . No se realizó ninguna actualización.");
+							            }
+							        } catch (SQLException e1) {
+							            e1.printStackTrace();
+							        } finally {
+							            // Cerrar recursos (prepared statement y conexión)
+							            try {
+							                if (pstmt != null) pstmt.close();
+							                if (conn != null) conn.close();
+							            } catch (SQLException e1) {
+							                e1.printStackTrace();
+							            }
+							        }
+								
 								JOptionPane.showMessageDialog(null, "Modificacion Realizada", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
 							}
@@ -640,9 +699,9 @@ public class SolEmpresa extends JDialog
 		}
 
 		//mod, todo el if
-		if (solicitud != null)
+		if (aux != null)
 		{
-			txtRNC.setText(solicitud.getRnc());
+			txtRNC.setText(aux.getRnc());
 
 			Empresa empresa = Bolsa.getInstance().buscarEmpresaByRNC(txtRNC.getText());
 			if (empresa != null)
@@ -653,12 +712,12 @@ public class SolEmpresa extends JDialog
 			}
 			txtRNC.setEditable(false);
 		}
-		loadSolicitud(); // mod
+		loadSolicitud(aux); // mod
 	}
 
-	private void loadSolicitud() //mod, la funcion completa
+	private void loadSolicitud(SoliEmpresa solicitud) //mod, la funcion completa
 	{
-		if (solicitud != null)
+		if ( solicitud != null)
 		{
 			Empresa empresa = Bolsa.getInstance().buscarEmpresaByRNC(solicitud.getRnc());
 			txtRNC.setText(solicitud.getRnc());
@@ -712,7 +771,7 @@ public class SolEmpresa extends JDialog
 			}
 
 			if (rdbtnUniversitario.isSelected() || rdbtnTecnico.isSelected())
-				cbxArea.setSelectedIndex(0);
+				//cbxArea.setSelectedIndex(0);
 
 			cbxCiudad.setSelectedIndex(0);
 

@@ -117,6 +117,7 @@ public class List_oferta extends JDialog
 						MostrarSolicitud soli = new MostrarSolicitud(selected);
 						soli.setModal(true);
 						soli.setVisible(true);
+						loadSolicitudes();
 					}
 				});
 				{
@@ -145,7 +146,7 @@ public class List_oferta extends JDialog
 								SolEmpresa solEmp = new SolEmpresa((SoliEmpresa) selected);
 								solEmp.setModal(true);
 								solEmp.setVisible(true);
-							
+								loadSolicitudes();
 						}
 					});
 					btnModificar.setEnabled(false);
@@ -186,6 +187,7 @@ public class List_oferta extends JDialog
 								btnEliminar.setEnabled(false);
 							}
 						}
+						loadSolicitudes();
 					}
 				});
 				btnEliminar.setActionCommand("OK");

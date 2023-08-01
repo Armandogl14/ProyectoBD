@@ -151,7 +151,7 @@ public class ListSolicitudes extends JDialog
 								solPer.setModal(true);
 								solPer.setVisible(true);
 							}
-
+							loadSolicitudes();
 						}
 					});
 					btnModificar.setEnabled(false);
@@ -192,6 +192,7 @@ public class ListSolicitudes extends JDialog
 							
 							btnEliminar.setEnabled(false);
 						}
+						loadSolicitudes();
 					}
 				});
 				btnEliminar.setActionCommand("OK");

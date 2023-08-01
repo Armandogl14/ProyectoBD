@@ -86,6 +86,8 @@ public class SolPersona extends JDialog
 	private Connection  conexion = Bolsa.abrirConexion();
 	private String insertSoli = "Insert into Solicitud_Persona (Mobilidad, Contrato, Licencia, Nivel_Educativo, Sueldo, Activa, Cedula, id_carrera, id_area, id_idioma, id_ciudad, Agnos_Experiencia) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private String insertPersona = "insert into Persona (Cedula, Nombre, Telefono, Direccion, Contratado, Nivel_Educativo, id_ciudad) values (?, ?, ?, ?, ?, ?, ?)";
+	private String updateSoli = "update Solicitud_Persona set Mobilidad = ?, Contrato = ?, Licencia = ?, Nivel_Educativo = ?, Sueldo = ?, Activa = ?, Cedula = ?, id_carrera = ?, id_area = ?, id_idioma = ?, id_ciudad = ?, Agnos_Experiencia = ? where codigo = ?";
+
 	private String mobilidadStr = "No";
 	private String licenciaStr = "No";
 	@SuppressWarnings("rawtypes")
@@ -568,40 +570,78 @@ public class SolPersona extends JDialog
 
 						else
 						{
-							Persona person = Bolsa.getInstance().buscarPersonaByCedula(solicitud.getCedula());
-							if (validar())
-							{
-								if (rdbtnMudarseSi.isSelected())
-									mov = true;
-
-								if (rdbtnLicenciaSi.isSelected())
-									lic = true;
-
-								solicitud.setContrato(cbxContrato.getSelectedItem().toString());
-								solicitud.setSueldo(Float.valueOf(spnSalario.getValue().toString()));
-								solicitud.setCuidad(cbxCiudad.getSelectedItem().toString());
-								//solicitud.setIdiomas(txtIdiomas.getText());
-								solicitud.setLicencia(lic);
-								solicitud.setMovilidad(mov);
-
-								if (person instanceof Universitario)
-								{
-									((Universitario) person).setCarrera(cbxCarrera.getSelectedItem().toString());
-									((Universitario) person).setAgnos(Integer.valueOf(spnAgnos.getValue().toString()));
-								}
-
-								else if (person instanceof Tecnico)
-								{
-									((Tecnico) person).setArea(cbxArea.getSelectedItem().toString());
-									((Tecnico) person).setAgnos(Integer.valueOf(spnAgnos.getValue().toString()));
-								}
-
-								JOptionPane.showMessageDialog(null, "Modificacion Realizada", "Informacion",
-										JOptionPane.INFORMATION_MESSAGE);
+							if (rdbtnMudarseSi.isSelected())
+								mobilidadStr = "Si";
+							else {
+								mobilidadStr = "No";
 							}
-							else
-								JOptionPane.showMessageDialog(null, "Modificacion Incompleta", "Informacion",
-										JOptionPane.INFORMATION_MESSAGE);
+							Connection conn = null;
+							PreparedStatement pstmt = null;
+							 try {
+						            // Establecer la conexión con la base de datos (reemplaza los valores adecuadamente)
+						            conn = DriverManager.getConnection(Bolsa.getDbUrl(),Bolsa.getUsername(),Bolsa.getPassword());
+						            pstmt = conn.prepareStatement(updateSoli);
+						            int filasActualizadas = 0; 
+//Mobilidad = ?, Contrato = ?, Licencia = ?, Nivel_Educativo = ?, Sueldo = ?, Activa = ?, Cedula = ?, id_carrera = ?, id_area = ?, id_idioma = ?, id_ciudad = ?, Agnos_Experiencia = ? where codigo = ?";
+						            // Asignar los valores a los parámetros de la consulta
+						            //pstmt.setString(5,txtRNC.getText());
+						            
+						            if(rdbtnUniversitario.isSelected()) {
+										PreparedStatement querySoliP = conexion.prepareStatement(updateSoli);
+										    pstmt.setInt(13,Integer.valueOf(solicitud.getCodigo()));
+										 	pstmt.setString(1,"Si");
+								            pstmt.setString(2, cbxContrato.getSelectedItem().toString());
+								            pstmt.setString(3, licenciaStr);
+								            pstmt.setString(4, "Universitario");
+								            pstmt.setFloat(5,Float.valueOf(spnSalario.getValue().toString()));
+								            pstmt.setString(6, "Si");
+								            pstmt.setString(7, txtCedula.getText());
+								            pstmt.setString(8, cbxCarrera.getSelectedItem().toString().substring(0, cbxCarrera.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setString(9, null);
+								            pstmt.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+								            pstmt.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+								            filasActualizadas = pstmt.executeUpdate();
+						            }
+									else if(rdbtnTecnico.isSelected()) {
+										PreparedStatement querySoliP = conexion.prepareStatement(updateSoli);
+										
+										pstmt.setInt(13,Integer.valueOf(solicitud.getCodigo()));
+										pstmt.setString(1,"Si");
+							            pstmt.setString(2, cbxContrato.getSelectedItem().toString());
+							            pstmt.setString(3, licenciaStr);
+							            pstmt.setString(4, "Tecnico");
+							            pstmt.setFloat(5,Float.valueOf(spnSalario.getValue().toString()));
+							            pstmt.setString(6, "Si");
+							            pstmt.setString(7, txtCedula.getText());
+							            pstmt.setString(8, null);
+							            pstmt.setString(9, cbxArea.getSelectedItem().toString().substring(0, cbxArea.getSelectedItem().toString().indexOf(" ")));
+							            pstmt.setString(10, cbxIdioma.getSelectedItem().toString().substring(0, cbxIdioma.getSelectedItem().toString().indexOf(" ")));
+							            pstmt.setString(11, cbxCiudad.getSelectedItem().toString().substring(0, cbxCiudad.getSelectedItem().toString().indexOf(" ")));
+							            pstmt.setShort(12, Short.valueOf(spnAgnos.getValue().toString()));
+							            filasActualizadas = pstmt.executeUpdate();
+										
+									}
+						            
+						            if (filasActualizadas > 0) {
+						                System.out.println("La Solicitud ha sido actualizada correctamente.");
+						            } else {
+						                System.out.println("No se encontró ninguna solicidu con el codigo . No se realizó ninguna actualización.");
+						            }
+						        } catch (SQLException e1) {
+						            e1.printStackTrace();
+						        } finally {
+						            // Cerrar recursos (prepared statement y conexión)
+						            try {
+						                if (pstmt != null) pstmt.close();
+						                if (conn != null) conn.close();
+						            } catch (SQLException e1) {
+						                e1.printStackTrace();
+						            }
+						        }
+							JOptionPane.showMessageDialog(null, "Solicitud Modificada", "Informacion",
+									JOptionPane.INFORMATION_MESSAGE);
+									
 						}
 
 					}
@@ -695,7 +735,7 @@ public class SolPersona extends JDialog
 			}
 
 			if (rdbtnUniversitario.isSelected() || rdbtnTecnico.isSelected())
-				cbxArea.setSelectedIndex(0);
+				//cbxArea.setSelectedIndex(1);
 
 			cbxCiudad.setSelectedIndex(0);
 

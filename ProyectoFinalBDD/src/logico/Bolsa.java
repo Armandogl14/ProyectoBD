@@ -459,7 +459,7 @@ public class Bolsa implements Serializable
 	{
 		boolean login = false;
 		Connection conexion = abrirConexion();
-		String select = "select username, cotrasenia from Usuario";
+		String select = "select username, contrasenia from Usuario";
 
 		try
 		{
@@ -727,7 +727,7 @@ public class Bolsa implements Serializable
 	{
 		boolean existe = false;
 		Connection conexion = abrirConexion();
-		String select = "select RNC from Espresa";
+		String select = "select RNC from Empresa";
 
 		try
 		{

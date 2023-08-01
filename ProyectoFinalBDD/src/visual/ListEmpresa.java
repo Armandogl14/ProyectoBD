@@ -117,6 +117,7 @@ public class ListEmpresa extends JDialog
 								JOptionPane.showMessageDialog(null, "Error al eliminar, empresa vinculada", "Informacion",
 										JOptionPane.INFORMATION_MESSAGE);
 							}
+							loadEmpresas();
 						}
 
 						btnEliminar.setEnabled(false);
@@ -131,6 +132,7 @@ public class ListEmpresa extends JDialog
 							ModEmpresa mod = new ModEmpresa(selected);
 							mod.setModal(true);
 							mod.setVisible(true);
+							loadEmpresas();
 						}
 					});
 					{

@@ -123,6 +123,7 @@ public class ListPersonas extends JDialog
 							}
 							btnEliminar.setEnabled(false);
 						}
+						loadPersons();
 					}
 				});
 				{
@@ -134,6 +135,7 @@ public class ListPersonas extends JDialog
 							ModPersona modif = new ModPersona(selected);
 							modif.setModal(true);
 							modif.setVisible(true);
+							loadPersons();
 						}
 					});
 					{
