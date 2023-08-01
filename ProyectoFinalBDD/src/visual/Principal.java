@@ -33,7 +33,7 @@ public class Principal extends JFrame
 	private Dimension dim = null;
 	private JMenu menuAdministracion;
 	
-	public static void main(String[] args) throws ClassNotFoundException, IOException
+	/*public static void main(String[] args) throws ClassNotFoundException, IOException
 	{
 		try
 		{
@@ -45,7 +45,7 @@ public class Principal extends JFrame
 		{
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	public Principal()
 	{

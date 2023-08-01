@@ -466,8 +466,11 @@ public class Bolsa implements Serializable
 			ResultSet result = stmnt.executeQuery(select);
 
 			while(result.next()) {
-				if(result.getString("username").equalsIgnoreCase(username) && result.getString("contrasenia").equalsIgnoreCase(password))
+				if(result.getString("username").equalsIgnoreCase(username) && result.getString("contrasenia").equalsIgnoreCase(password)) {
+					System.out.println(result.getString("username")+" "+result.getString("contrasenia"));
 					login = true;
+				}
+					
 			}
 		}
 		catch (SQLException e)
