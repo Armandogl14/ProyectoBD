@@ -94,7 +94,6 @@ public class SolEmpresa extends JDialog
 	public SolEmpresa(SoliEmpresa aux1)
 	{
 		SoliEmpresa  aux = aux1;
-		System.out.println(aux.getRnc());
 		setResizable(false);
 		setTitle("Registrar Solicitud de Empresa");
 		if (aux != null) // mod
@@ -355,7 +354,8 @@ public class SolEmpresa extends JDialog
 				PanelTipoSolicitud.setBounds(10, 483, 561, 72);
 				panel.add(PanelTipoSolicitud);
 				PanelTipoSolicitud.setLayout(null);
-
+				//========
+				//=======
 				rdbtnUniversitario = new JRadioButton("Universitario");
 				rdbtnUniversitario.addMouseListener(new MouseAdapter()
 				{
@@ -387,7 +387,9 @@ public class SolEmpresa extends JDialog
 						rdbtnUniversitario.setSelected(false);
 						lblcarrera.setVisible(false);
 						cbxCarrera.setVisible(false);
+						lblarea.setVisible(true);
 						cbxArea.setModel(new DefaultComboBoxModel<>(areas.toArray(new String[0])));
+						cbxArea.setVisible(true);
 
 					}
 				});
@@ -412,38 +414,7 @@ public class SolEmpresa extends JDialog
 			}
 
 			cbxArea = new JComboBox();
-			/*cbxArea.addItemListener(new ItemListener()
-			{
-				public void itemStateChanged(ItemEvent e)
-				{
-
-					cbxCarrera.setEditable(true);
-					cbxCarrera.setEnabled(true);
-
-					if (cbxArea.getSelectedItem().toString().equalsIgnoreCase("Ciencias e Ingenieria"))
-						cbxCarrera.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Ing. Civil",
-								"Ing. Mecanica", "Ing. Electrica", "Ing. Industrial y de Sistemas", "Ing. Mecatronica",
-								"Ing. Ciencias de la Computacion", "Ing. Telematica", "Ing. Ambiental" }));
-
-					else if (cbxArea.getSelectedItem().toString().equalsIgnoreCase("Ciencias de la Salud"))
-						cbxCarrera.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>", "Estomatologia",
-								"Medicina", "Nutricion y Dietetica", "Terapia Fisica" }));
-
-					else if (cbxArea.getSelectedItem().toString().equalsIgnoreCase("Ciencias Administrativas"))
-						cbxCarrera.setModel(new DefaultComboBoxModel(
-								new String[] { "<Selecionar>", "Direccion Empresarial", "Administracion Hotelera", "Economia",
-										"Gesttion Financiera y Adutoria", "Marketing", "Hospitalida y Turismo" }));
-
-					else if (cbxArea.getSelectedItem().toString().equalsIgnoreCase("Ciencias Humanidades y Artes"))
-						cbxCarrera.setModel(
-								new DefaultComboBoxModel(new String[] { "<Selecionar>", "Arquitectura", "Comunicacion Social",
-										"Derecho", "Diseño e Interiorismo", "Educacion", "Filosofia", "Trabajo Social" }));
-
-					else
-						cbxCarrera.setModel(new DefaultComboBoxModel(new String[] { "<Selecionar>" }));
-
-				}
-			});*/
+			cbxArea.setVisible(false);
 			areas.add(0, "<Seleccionar>");
 			carreras.add(0, "<Seleccionar>");
 
@@ -452,6 +423,7 @@ public class SolEmpresa extends JDialog
 			{
 				cbxCarrera = new JComboBox();
 				cbxCarrera.setEnabled(false);
+				cbxCarrera.setVisible(false);
 				cbxCarrera.setBounds(67, 85, 208, 20);
 				PanelAptidutes.add(cbxCarrera);
 			}
